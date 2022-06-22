@@ -71,7 +71,7 @@ def uploader():
         xmax = dfEDFA["xEDFA"].max()
         xRange = [xmin, xmax]
         dx = ''
-        dfParam = pd.read_csv( './Uploads/'+'car.csv', skiprows=1, header=None, names=["fileName", "param"])
+        dfParam = pd.read_csv('./Uploads/'+'car.csv', skiprows=1, header=None, names=["fileName", "param"])
         #dfParam = pd.read_csv(filepath + '/CAR.CSV', skiprows=1, header=None, names=["fileName", "param"])
         param = dfParam["param"].tolist()
         if isCurv:
