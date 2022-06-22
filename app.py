@@ -39,7 +39,7 @@ def cb():
     filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
     #return render_template('customPlot.html', graphJSON=graphJSON)
     #return render_template('customPlot.html', graphJSON=graphJSON, dataJSON = dataJSON)
-    return render_template('customPlot.html', dataJSON=dataJSON, layoutJSON=layoutJSON, nameFig =filepath+'/'+nameFig)
+    return render_template('customPlot.html', dataJSON=dataJSON, layoutJSON=layoutJSON)
     #return dataJSON
     #return render_template('customPlot.html', dataJSON=gm(paramStr, xRange, flagLgd, varControl))
     #return render_template('customPlot.html',  graphJSON=gm(paramStr,xRange,dx, flagLgd,varControl))
@@ -85,7 +85,7 @@ def uploader():
         flagLgd = True
         varControl=''
         #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
-        dataJSON, layoutJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,varControl)
+        dataJSON, layoutJSON = gm(paramStr,xRange,dx, flagLgd,varControl)
         return render_template('generalPlot.html', paramStr=paramStr, dataJSON=dataJSON, layoutJSON=layoutJSON)
 #        return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON)
 
@@ -97,8 +97,8 @@ def gm(paramStr,xRange,dx, flagLgd,varControl):
     dataJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
     #graphJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
     layoutJSON = json.dumps(fig.layout, cls=plotly.utils.PlotlyJSONEncoder)
-    nameFig = fu.PlotTxParam(df2, varControl, dx, 'Inc')
-    return dataJSON, layoutJSON, nameFig
+    #nameFig = fu.PlotTxParam(df2, varControl, dx, 'Inc')
+    return dataJSON, layoutJSON
     #return graphJSON
 
 
