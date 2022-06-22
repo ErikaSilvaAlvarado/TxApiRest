@@ -62,15 +62,17 @@ def uploader():
         for file in uploaded_files:
             # obtenemos el archivo del input "archivo"
             filename = secure_filename(file.filename)
-            # Guardamos el archivo en el directorio "ArchivosPDF"
+            # Guardamos el archivo en el directorio "Uploads"
             file.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
-        #dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
-        dfEDFA = pd.read_csv('./Uploads/' +'EDFA.csv', header=22, names=["xEDFA", "yEDFA"])
+        os.chdir(filepath)
+        dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
+        #dfEDFA = pd.read_csv('./Uploads/' +'EDFA.csv', header=22, names=["xEDFA", "yEDFA"])
         #dfEDFA = pd.read_csv(filepath + '/EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
         xmin = dfEDFA["xEDFA"].min()
         xmax = dfEDFA["xEDFA"].max()
         xRange = [xmin, xmax]
         dx = ''
+        dfParam = pd.read_csv('car.csv', skiprows=1, header=None, names=["fileName", "param"])
         dfParam = pd.read_csv('./Uploads/'+'car.csv', skiprows=1, header=None, names=["fileName", "param"])
         #dfParam = pd.read_csv(filepath + '/CAR.CSV', skiprows=1, header=None, names=["fileName", "param"])
         param = dfParam["param"].tolist()
