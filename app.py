@@ -71,6 +71,8 @@ def uploader():
         xmax = dfEDFA["xEDFA"].max()
         xRange = [xmin, xmax]
         dx = ''
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
         os.chdir(filepath)
         dfParam = pd.read_csv('CAR.CSV', skiprows=1, header=None, names=["fileName", "param"])
         #dfParam = pd.read_csv('./Uploads/'+'car.csv', skiprows=1, header=None, names=["fileName", "param"])
