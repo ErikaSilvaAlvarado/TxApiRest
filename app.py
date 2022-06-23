@@ -17,7 +17,7 @@ import plotly.express as px
 #from sqlalchemy import create_engine
 # instancia del objeto Flask
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='/static')
 # Carpeta de subida
 app.config['UPLOAD_FOLDER'] = 'Uploads'
 
@@ -40,22 +40,11 @@ def cb():
         flagLgd = True
     else:
         flagLgd = False
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
-    os.chdir(filepath)
-    df1 = pd.read_csv("dataAll.csv")
-    x = df1["Wavelength"]
-    df2 = fu.RefreshDataFrame(df1,xRange, paramStr)
-    nameFig = fu.PlotParamIntLgd(df2,flagLgd)
-    #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
-    dataJSON, layoutJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
+    dataJSON, layoutJSON,nameFig = gm(paramStr, xRange, dx, flagLgd, varControl)
     #return render_template('customPlot.html', graphJSON=graphJSON)
     #return render_template('customPlot.html', graphJSON=graphJSON, dataJSON = dataJSON)
     return render_template('customPlot.html', dataJSON=dataJSON, layoutJSON=layoutJSON,nameFig=nameFig)
-    #return dataJSON
-    #return render_template('customPlot.html', dataJSON=gm(paramStr, xRange, flagLgd, varControl))
-    #return render_template('customPlot.html',  graphJSON=gm(paramStr,xRange,dx, flagLgd,varControl))
-
+    
 @app.route("/")
 def upload_file():
     # renderizamos la plantilla "index.html"
@@ -107,7 +96,7 @@ def uploader():
         flagLgd = True
         varControl=''
         #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
-        dataJSON, layoutJSON = gm(paramStr,xRange,dx, flagLgd,varControl)
+        dataJSON, layoutJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,varControl)
         return render_template('generalPlot.html', paramStr=paramStr, dataJSON=dataJSON, layoutJSON=layoutJSON)
 #        return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON)
 
@@ -122,8 +111,8 @@ def gm(paramStr,xRange,dx, flagLgd,varControl):
     dataJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
     #graphJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
     layoutJSON = json.dumps(fig.layout, cls=plotly.utils.PlotlyJSONEncoder)
-    #nameFig = fu.PlotTxParam(df2, varControl, dx, 'Inc')
-    return dataJSON, layoutJSON
+    nameFig = fu.PlotTxParam(df2, varControl, dx, 'Inc')
+    return dataJSON, layoutJSON, nameFig
     #return graphJSON
 
 
