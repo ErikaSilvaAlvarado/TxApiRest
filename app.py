@@ -34,9 +34,7 @@ def cb():
     else:
         flagLgd = False
     #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
-    dataJSON, layoutJSON, nameFig = gm(paramStr, xRange, dx, flagLgd, varControl)
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+    dataJSON, layoutJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
     #return render_template('customPlot.html', graphJSON=graphJSON)
     #return render_template('customPlot.html', graphJSON=graphJSON, dataJSON = dataJSON)
     return render_template('customPlot.html', dataJSON=dataJSON, layoutJSON=layoutJSON)
