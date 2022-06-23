@@ -60,8 +60,6 @@ def uploader():
             filename = secure_filename(file.filename)
             # Guardamos el archivo en el directorio "Uploads"
             file.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
-        #whereAmI = os.getcwd()
-        #os.chdir(whereAmI+'/Uploads')
         os.chdir(filepath)
         filesCSV = glob.glob('*.CSV')
         for i in filesCSV:
@@ -100,6 +98,9 @@ def uploader():
 #        return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON)
 
 def gm(paramStr,xRange,dx, flagLgd,varControl):
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+    os.chdir(filepath)
     df1 = pd.read_csv("dataAll.csv")
     x = df1["Wavelength"]
     df2 = fu.RefreshDataFrame(df1,xRange, paramStr)
