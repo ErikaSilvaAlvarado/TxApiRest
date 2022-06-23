@@ -1,6 +1,6 @@
 
 import os
-from flask import Flask, jsonify, g,abort, render_template, request, redirect, url_for
+from flask import Flask, jsonify, g,abort, render_template, request, redirect, url_for, send_from_directory
 # from app import app
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
