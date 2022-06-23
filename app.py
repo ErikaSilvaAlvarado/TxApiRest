@@ -69,8 +69,8 @@ def uploader():
         for i in filesCSV:
             if i=='EDFA.CSV':
                 dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
-            elif i=='CAR.CSV':
-                dfParam = pd.read_csv('CAR.CSV', skiprows=1, header=None, names=["fileName", "param"])
+            elif i=='CAR.CSV' or i=='car.csv' or i=='CAR.csv' or i=='car.CSV':
+                dfParam = pd.read_csv(i, skiprows=1, header=None, names=["fileName", "param"])
         #dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
         #dfEDFA = pd.read_csv('./Uploads/' +'EDFA.csv', header=22, names=["xEDFA", "yEDFA"])
         #dfEDFA = pd.read_csv(filepath + '/EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
