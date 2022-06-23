@@ -53,10 +53,8 @@ def upload_file():
 @app.route("/upload", methods=['POST', 'GET'])
 def uploader():
     #if request.method == 'POST':
-        
         uploaded_files = request.files.getlist('archivo')
         isCurv= request.form.get('isCurv')
-       
         basedir = os.path.abspath(os.path.dirname(__file__))
         filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
         for file in uploaded_files:
@@ -64,7 +62,8 @@ def uploader():
             filename = secure_filename(file.filename)
             # Guardamos el archivo en el directorio "Uploads"
             file.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
-        os.chdir(filepath)
+        whereAmI = os.getcwd()
+        os.chdir(whereAmI+'/Uploads')
         dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
         #dfEDFA = pd.read_csv('./Uploads/' +'EDFA.csv', header=22, names=["xEDFA", "yEDFA"])
         #dfEDFA = pd.read_csv(filepath + '/EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
