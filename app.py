@@ -64,6 +64,7 @@ def uploader():
             filename = secure_filename(file.filename)
             # Guardamos el archivo en el directorio "Uploads"
             file.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
+        os.chdir(filepath)
         dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
         #dfEDFA = pd.read_csv('./Uploads/' +'EDFA.csv', header=22, names=["xEDFA", "yEDFA"])
         #dfEDFA = pd.read_csv(filepath + '/EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
