@@ -62,19 +62,22 @@ def uploader():
             filename = secure_filename(file.filename)
             # Guardamos el archivo en el directorio "Uploads"
             file.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
-        whereAmI = os.getcwd()
-        os.chdir(whereAmI+'/Uploads')
-        dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
+        #whereAmI = os.getcwd()
+        #os.chdir(whereAmI+'/Uploads')
+        os.chdir(filepath)
+        filesCSV = glob.glob('*.CSV')
+        for i in filesCSV:
+            if i=='EDFA.CSV':
+                dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
+            elif i=='CAR.CSV':
+                dfParam = pd.read_csv('CAR.CSV', skiprows=1, header=None, names=["fileName", "param"])
+        #dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
         #dfEDFA = pd.read_csv('./Uploads/' +'EDFA.csv', header=22, names=["xEDFA", "yEDFA"])
         #dfEDFA = pd.read_csv(filepath + '/EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
         xmin = dfEDFA["xEDFA"].min()
         xmax = dfEDFA["xEDFA"].max()
         xRange = [xmin, xmax]
         dx = ''
-        basedir = os.path.abspath(os.path.dirname(__file__))
-        filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
-        os.chdir(filepath)
-        dfParam = pd.read_csv('CAR.CSV', skiprows=1, header=None, names=["fileName", "param"])
         #dfParam = pd.read_csv('./Uploads/'+'car.csv', skiprows=1, header=None, names=["fileName", "param"])
         #dfParam = pd.read_csv(filepath + '/CAR.CSV', skiprows=1, header=None, names=["fileName", "param"])
         param = dfParam["param"].tolist()
