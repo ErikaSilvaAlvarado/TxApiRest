@@ -21,6 +21,13 @@ app = Flask(__name__)
 # Carpeta de subida
 app.config['UPLOAD_FOLDER'] = 'Uploads'
 
+@app.route('/downloads/<path:filename>', methods=['GET', 'POST'])
+def download(filename):
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+    # Returning file from appended path
+    return send_from_directory(directory=filepath, path=filename)
+
 @app.route('/callback', methods=['POST', 'GET'])
 def cb():
     paramStr = request.form.getlist('selectValues')
@@ -33,11 +40,18 @@ def cb():
         flagLgd = True
     else:
         flagLgd = False
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+    os.chdir(filepath)
+    df1 = pd.read_csv("dataAll.csv")
+    x = df1["Wavelength"]
+    df2 = fu.RefreshDataFrame(df1,xRange, paramStr)
+    nameFig = fu.PlotParamIntLgd(df2,flagLgd)
     #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
     dataJSON, layoutJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
     #return render_template('customPlot.html', graphJSON=graphJSON)
     #return render_template('customPlot.html', graphJSON=graphJSON, dataJSON = dataJSON)
-    return render_template('customPlot.html', dataJSON=dataJSON, layoutJSON=layoutJSON)
+    return render_template('customPlot.html', dataJSON=dataJSON, layoutJSON=layoutJSON,nameFig=nameFig)
     #return dataJSON
     #return render_template('customPlot.html', dataJSON=gm(paramStr, xRange, flagLgd, varControl))
     #return render_template('customPlot.html',  graphJSON=gm(paramStr,xRange,dx, flagLgd,varControl))
