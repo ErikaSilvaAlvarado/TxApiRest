@@ -50,6 +50,20 @@ def upload_file():
     # renderizamos la plantilla "index.html"
     return render_template('index.html')
 
+@app.route("/loaded_database", methods=['POST', 'GET'])
+def uploadDB():
+    csvFile = request.form['csvFile']
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+    os.chdir(filepath)
+    df1 = pd.read_csv(csvFile+".csv")
+    col_names = df1.columns.values[1:]
+    paramStr = col_names.tolist()
+    fig = fu.PlotParamInt(df1)
+    dataJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
+    layoutJSON = json.dumps(fig.layout, cls=plotly.utils.PlotlyJSONEncoder)
+    return render_template('generalPlot.html', paramStr=paramStr, dataJSON=dataJSON, layoutJSON=layoutJSON)
+
 
 @app.route("/upload", methods=['POST', 'GET'])
 def uploader():
@@ -84,6 +98,7 @@ def uploader():
             curv = fu.Dist2Curv(param)
             dfParam["param"]=curv
         df = fu.CreateTxDataFrame(filepath, dfEDFA, dfParam)  # require EDFA and fileName
+        csvfile="dataAll"
         df.to_csv("dataAll.csv", index=False)
         param = dfParam["param"].values
         paramStr = [str(x) for x in param]
@@ -96,15 +111,15 @@ def uploader():
         flagLgd = True
         varControl=''
         #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
-        dataJSON, layoutJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,varControl)
+        dataJSON, layoutJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,varControl,csvfile)
         return render_template('generalPlot.html', paramStr=paramStr, dataJSON=dataJSON, layoutJSON=layoutJSON)
 #        return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON)
 
-def gm(paramStr,xRange,dx, flagLgd,varControl):
+def gm(paramStr,xRange,dx, flagLgd,varControl,csvfile):
     basedir = os.path.abspath(os.path.dirname(__file__))
     filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
     os.chdir(filepath)
-    df1 = pd.read_csv("dataAll.csv")
+    df1 = pd.read_csv(csvfile+".csv")
     x = df1["Wavelength"]
     df2 = fu.RefreshDataFrame(df1,xRange, paramStr)
     fig = fu.PlotParamIntLgd(df2,flagLgd)

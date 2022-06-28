@@ -2,16 +2,19 @@
 <html>
  <head>
      <meta name="viewport" content="initial-scale=1, width=device-width">
-     <title>Load file </title>
+     <title>Load Database </title>
  </head>
 
  <body>
-  <h1>Upload your CSV files</h1>
-  <form action="/upload" method="POST" enctype="multipart/form-data">
-    <p><input type="file" name="archivo" multiple></p>
-    <p> <input type="checkbox" id= "isCurv" name="isCurv" /> <label for="isCurv"> Curvatura</label><br> </p>
+     <label for="csvFile">Database:</label>
+        <select name='varControl' id="varcontrol" >
+            <option value="temp_inc">Temperatura incremental </option>
+            <option value="temp_dec">Temperatura decremental </option>
+            <option value="curv_inc">Curvatura incremental</option>
+            <option value="curv_dec">Curvatura decremental</option>
+        </select> <br>
 
     <p><input type="submit" value="Submit"></p>
- </form>
+
  </body>
 </html>
