@@ -6,15 +6,15 @@
  </head>
 
  <body>
-     <label for="csvFile">Database:</label>
-        <select name='varControl' id="varcontrol" >
+    <form name="form1" action="/loaded_database" method="POST" >
+        <label for="csvFile">Database:</label>
+        <select name='csvFile' id="csvFile" >
             <option value="temp_inc">Temperatura incremental </option>
             <option value="temp_dec">Temperatura decremental </option>
             <option value="curv_inc">Curvatura incremental</option>
             <option value="curv_dec">Curvatura decremental</option>
         </select> <br>
-
-    <p><input type="submit" value="Submit"></p>
-
+        <p><input type="submit" value="Submit"></p>
+     </form>
  </body>
 </html>
