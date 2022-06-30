@@ -14,10 +14,19 @@ import json
 import plotly
 pd.options.plotting.backend = "plotly"
 import plotly.express as px
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
+from sqlalchemy import create_engine, inspect
+from sqlalchemy import MetaData
+from sqlalchemy.ext.declarative import declarative_base
 #from sqlalchemy import create_engine
 # instancia del objeto Flask
 
 app = Flask(__name__, static_folder='/static')
+app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://b07b4484224a54:edf76401@us-cdbr-east-06.cleardb.net/heroku_daac59f6173f49a'
+#app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] =False
+
 # Carpeta de subida
 app.config['UPLOAD_FOLDER'] = 'Uploads'
 
@@ -47,17 +56,24 @@ def cb():
     return render_template('customPlot.html', dataJSON=dataJSON, layoutJSON=layoutJSON,nameFig=nameFig)
     
 @app.route("/")
-def upload_file():
+def listingTables():
+    engine = create_engine("mysql+pymysql://b07b4484224a54:edf76401@us-cdbr-east-06.cleardb.net/heroku_daac59f6173f49a")
+    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    inspector = inspect(engine)
+    table_names = inspector.get_table_names()
     # renderizamos la plantilla "index.html"
-    return render_template('index.html')
+    return render_template('index.html',table_names=table_names)
 
 @app.route("/loaded_database", methods=['POST', 'GET'])
 def uploadDB():
-    csvFile = request.form['csvFile']
+    #csvFile = request.form['']
+    engine = create_engine("mysql+pymysql://b07b4484224a54:edf76401@us-cdbr-east-06.cleardb.net/heroku_daac59f6173f49a")
+    table_name = request.form['selectdb']
     basedir = os.path.abspath(os.path.dirname(__file__))
     filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
     os.chdir(filepath)
-    df1 = pd.read_csv(csvFile+".csv")
+    #df1 = pd.read_csv(csvFile+".csv")
+    table_df1 = pd.read_sql_table(table_name,con=engine)
     col_names = df1.columns.values[1:]
     xmin = df1["Wavelength"].min()
     xmax = df1["Wavelength"].max()
