@@ -161,7 +161,7 @@ def uploader():
             elif i=='EDFA.CSV':
                 prefix='Tx'
                 dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
-        if prefix='Tx':
+        if prefix=='Tx':
             df = fu.CreateTxDataFrame(filepath, dfEDFA, dfParam)  # require EDFA and fileName  
         xmin = dfEDFA["xEDFA"].min()
         xmax = dfEDFA["xEDFA"].max()
