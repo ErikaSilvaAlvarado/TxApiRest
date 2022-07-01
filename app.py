@@ -34,6 +34,7 @@ app.config['UPLOAD_FOLDER'] = 'Uploads'
 def download(filename):
     basedir = os.path.abspath(os.path.dirname(__file__))
     filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+    os.chdir(filepath)
     # Returning file from appended path
     return send_from_directory(directory=filepath, path=filename)
 
@@ -184,12 +185,11 @@ def uploader():
 def gm(paramStr,xRange,dx, flagLgd,table_name):
     engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
     df1 = pd.read_sql_table(table_name,con=engine)
-    """
     basedir = os.path.abspath(os.path.dirname(__file__))
     filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
     os.chdir(filepath)
-    df1 = pd.read_csv(csvFile+".csv")
-    """
+    #df1 = pd.read_csv(csvFile+".csv")
+    
     x = df1["Wavelength"]
     df2 = fu.RefreshDataFrame(df1,xRange, paramStr)
     fig = fu.PlotParamIntLgd(df2,flagLgd)
