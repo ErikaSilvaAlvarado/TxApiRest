@@ -144,7 +144,6 @@ def CreatePoutDataFrame(filepath,dfParam):
 # Laser
 # [x, y, L] = fu.ReadFolderPout(files, xRange, yRange)
 def ReadFolderPout(files, xRange, yRange):
-    #yASE is np array
     x,y,L = [], [], []
     filesCSV = glob.glob('*.CSV')
     NOF = len(files)
