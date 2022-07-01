@@ -52,7 +52,7 @@ def cb():
     graphJSON,nameFig = gm(paramStr, xRange, dx, flagLgd, table_name)
     #return render_template('customPlot.html', graphJSON=graphJSON)
     #return render_template('customPlot.html', graphJSON=graphJSON, dataJSON = dataJSON)
-    return render_template('customPlot.html',graphJSON=graphJSON ,nameFig=table_name)
+    return render_template('customPlot.html',graphJSON=graphJSON ,nameFig=nameFig)
     
 @app.route("/")
 def listingTables():

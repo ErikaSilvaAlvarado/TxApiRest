@@ -10,10 +10,10 @@
  <body>
     <h1>All Signals</h1>
    <form name="form1" action="/callback" method="POST" >
-        <input type="text" id='xmin' name="xmin"><br>
-        <input type="text" id='xmax' name="xmax"><br>
+        <label for="xmin">xmin:</label> <input type="text" id='xmin' name="xmin"> <br>
+        <input type="text" id='xmax' name="xmax"> <label for="xmax">xmax:</label><br>
        <input type="text" id='dx' name="dx"><br>
-       <input type="checkbox" name="Leyenda"/>
+       <label for="Leyenda">Insertar leyenda</label> <input type="checkbox" id="Leyenda" name="Leyenda"/><br>
         <label for="selectValues">Choose signal(s):</label>
         <select name='selectValues' id="selectValues" multiple >
         </select>
