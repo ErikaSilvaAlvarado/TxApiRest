@@ -134,6 +134,30 @@ def CreateTxDataFrame(filepath,dfEDFA, dfParam):
             df1[paramStr[i]] = yi-yASE
     return df1
 
+def CreatePoutDataFrame(filepath,dfParam):
+    files = dfParam["fileName"].tolist()
+    param = dfParam["param"].tolist()
+    [x,y,L] = ReadFolderPout(files, [1300 1700], [-100,5])
+    df = List2df(x,y,L,param)
+    return df
+
+# Laser
+# [x, y, L] = fu.ReadFolderPout(files, xRange, yRange)
+def ReadFolderPout(files, xRange, yRange):
+    #yASE is np array
+    x,y,L = [], [], []
+    filesCSV = glob.glob('*.CSV')
+    NOF = len(files)
+    for i in range(NOF):
+        sufix ="0" + str(files[i]) + ".CSV"
+        fileName =  [this for this in filesCSV if this.startswith("W") and this.endswith(sufix)]
+        #np arrays
+        [xi, yi] = LoadSignal(fileName[0], 29, xRange, yRange)
+        x.append(xi)
+        y.append(yi)
+        L.append(len(xi))
+    return [x, y, L]
+
 def List2df(x,y,L,param):
 #unifico la longitud de las listas para volverlas dataframe
     NOF = len(param)
@@ -621,22 +645,7 @@ def RegressionLin(xRange, a):
         # yy=sol[0]+sol[1]*xx+sol[2]*xx**2
     return ([xx,yy])
 
-# Laser
-# [x, y, L] = fu.ReadFolderPout(files, xRange, yRange)
-def ReadFolderPout(files, xRange, yRange):
-    #yASE is np array
-    x,y,L = [], [], []
-    filesCSV = glob.glob('*.CSV')
-    NOF = len(files)
-    for i in range(NOF):
-        sufix ="0" + str(files[i]) + ".CSV"
-        fileName =  [this for this in filesCSV if this.startswith("W") and this.endswith(sufix)]
-        #np arrays
-        [xi, yi] = LoadSignal(fileName[0], 29, xRange, yRange)
-        x.append(xi)
-        y.append(yi)
-        L.append(len(xi))
-    return [x, y, L]
+
 
 
 

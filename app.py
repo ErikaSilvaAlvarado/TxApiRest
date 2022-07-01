@@ -140,6 +140,7 @@ def uploader():
     #if request.method == 'POST':
         uploaded_files = request.files.getlist('archivo')
         varControl = request.form['varControl']
+        prefix = request.form['type'] #po or tx
         basedir = os.path.abspath(os.path.dirname(__file__))
         filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
         for file in uploaded_files:
@@ -149,7 +150,7 @@ def uploader():
             file.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
         os.chdir(filepath)
         filesCSV = glob.glob('*.CSV')
-        prefix='Po'
+        
         for i in filesCSV:
             if i=='CAR.CSV' or i=='car.csv' or i=='CAR.csv' or i=='car.CSV':
                 dfParam = pd.read_csv(i, skiprows=1, header=None, names=["fileName", "param"])
@@ -163,8 +164,10 @@ def uploader():
                 dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
         if prefix=='tx':
             df = fu.CreateTxDataFrame(filepath, dfEDFA, dfParam)  # require EDFA and fileName  
-        xmin = dfEDFA["xEDFA"].min()
-        xmax = dfEDFA["xEDFA"].max()
+        else:
+            df = fu.CreatePoutDataFrame(filepath, dfParam)
+        xmin = df["Wavelength"].min()
+        xmax = df["Wavelength"].max()
         xRange = [xmin, xmax]
         dx = ''
         if varControl=='curv':
