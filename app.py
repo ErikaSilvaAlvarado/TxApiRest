@@ -93,8 +93,6 @@ def loadDB():
     filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
     os.chdir(filepath)
     #procedimiento para crear las tablas
-    varControl = request.form['varControl']
-    table_name = varControl+
     df1 = pd.read_csv("curv_dec.csv")   
     df2 = pd.read_csv("curv_inc.csv")
     df3 = pd.read_csv("temp_dec.csv")
@@ -178,7 +176,7 @@ def uploader():
         df.to_sql(table_name, engine, index=False)
         param = dfParam["param"].values
         paramStr = [str(x) for x in param]
-        flagLgd = True'
+        flagLgd = 'True'
         #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
         graphJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,table_name)
         return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON)
