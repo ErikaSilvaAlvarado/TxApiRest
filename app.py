@@ -167,7 +167,7 @@ def uploader():
         xmax = dfEDFA["xEDFA"].max()
         xRange = [xmin, xmax]
         dx = ''
-        if varControl=='Curv'
+        if varControl=='Curv':
             curv = fu.Dist2Curv(param)
             dfParam["param"]=curv
         table_name =prefix+varControl+direction
