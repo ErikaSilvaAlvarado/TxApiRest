@@ -2,10 +2,11 @@
 <html>
  <head>
      <meta name="viewport" content="initial-scale=1, width=device-width">
-     <title>Graficar base de datos existente: </title>
+     <title>Choose a plot form: </title>
  </head>
 
  <body>
+    <p><h1>Option1: Plot a remote database table:</h1></p>
     <form name="form1" action="/loaded_database" method="POST" >
     <label for="selectdb">Choose Databases(s):</label>
             <select name='selectdb' id="selectdb" multiple >
@@ -25,18 +26,20 @@
         <p><input type="submit" value="Submit"></p>
      </form>
 
-<p> O cargar archivos para graficar:</p>
-    
-   <h1>Upload your CSV files</h1>
+    <p><h1>Option1: Load OSA files: </h1></p>
+    <p>Load CSV files </p>
     <form action="/upload" method="POST" enctype="multipart/form-data">
     <p><input type="file" name="archivo" multiple></p>
     <p> <input type="checkbox" id= "isCurv" name="isCurv" /> <label for="isCurv"> Curvatura</label><br> </p>
     <p><input type="submit" value="Submit"></p>
- </form>
+    </form>
 
+    <a>href=loadCSV.html</a>
 
-
-<a>href=loadCSV.html
+    <p><h1> Load CSV table to remote database:</h1></p>
+    <form action="/csvtables2db" method="POST" enctype="multipart/form-data">
+    <p><input type="submit" value="Load2DB"></p>
+    </form>
 
  </body>
 </html>

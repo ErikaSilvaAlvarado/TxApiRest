@@ -1,5 +1,5 @@
-
 import os
+import pymysql
 from flask import Flask, jsonify, g,abort, render_template, request, redirect, url_for, send_from_directory
 # from app import app
 from werkzeug.utils import secure_filename
@@ -19,12 +19,12 @@ from sqlalchemy.sql import func
 from sqlalchemy import create_engine, inspect
 from sqlalchemy import MetaData
 from sqlalchemy.ext.declarative import declarative_base
-#from sqlalchemy import create_engine
+
 # instancia del objeto Flask
 
 app = Flask(__name__, static_folder='/static')
-app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://b07b4484224a54:edf76401@us-cdbr-east-06.cleardb.net/heroku_daac59f6173f49a'
-#app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt'
+#app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f'
+app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] =False
 
 # Carpeta de subida
@@ -57,7 +57,7 @@ def cb():
     
 @app.route("/")
 def listingTables():
-    engine = create_engine("mysql+pymysql://b07b4484224a54:edf76401@us-cdbr-east-06.cleardb.net/heroku_daac59f6173f49a")
+    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
     #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     inspector = inspect(engine)
     table_names = inspector.get_table_names()
@@ -68,6 +68,7 @@ def listingTables():
 def uploadDB():
     #csvFile = request.form['']
     engine = create_engine("mysql+pymysql://b07b4484224a54:edf76401@us-cdbr-east-06.cleardb.net/heroku_daac59f6173f49a")
+    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     table_name = request.form['selectdb']
     basedir = os.path.abspath(os.path.dirname(__file__))
     filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
@@ -86,6 +87,58 @@ def uploadDB():
     dataJSON, layoutJSON, nameFig = gm(paramStr,xRange,dx,flagLgd,varControl,csvFile)
     return render_template('generalPlot.html', paramStr=paramStr, dataJSON=dataJSON, layoutJSON=layoutJSON, csvFile=csvFile)
 
+
+@app.route("/csvtables2db", methods=['POST', 'GET'])
+def loadDB():
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    #metadata = MetaData()
+    #metadata.reflect(engine)
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+    os.chdir(filepath)
+    #procedimiento para crear las tablas
+    df1 = pd.read_csv("curv_dec.csv")   
+    df2 = pd.read_csv("curv_inc.csv")
+    df3 = pd.read_csv("temp_dec.csv")
+    df4 = pd.read_csv("temp_inc.csv")
+    df1.to_sql('Tx_curv_dec', engine, index=False)
+    df2.to_sql('Tx_curv_inc', engine, index=False)
+    df3.to_sql('Tx_temp_dec', engine, index=False)
+    df4.to_sql('Tx_temp_inc', engine, index=False)
+    
+    """
+    #para borar tablas
+    engine.execute("DROP table IF EXISTS Tx_curv_inc2")
+    engine.execute("DROP table IF EXISTS Tx_curv_dec2")
+    engine.execute("DROP table IF EXISTS Tx_temp_inc2")
+    engine.execute("DROP table IF EXISTS Tx_temp_dec2")
+    """
+    inspector = inspect(engine)
+    table_names = inspector.get_table_names()
+    #for table_name in table_names:
+    #    print(f"Table:{table_name}")
+    # renderizamos la plantilla "index.html"
+    return table_names
+    """    
+    #para borar en localhost pero en cleardb no creo haya funcionado
+    engine=drop_table('Tx_temp_inc2', engine)
+    engine=drop_table('Tx_temp_dec2', engine)
+    engine=drop_table('Tx_curv_inc2', engine)
+    engine=drop_table('Tx_curv_dec2', engine)
+    
+    #print(table_df1)
+    """
+    """
+    #esto vacía a tabla, pero no la borra
+    with engine.connect() as conn, conn.begin():
+        df = pd.read_sql('select * from Tx_curv_dec2 limit 1', con=conn)
+        print (df.head())
+        df.to_sql('Tx_curv_dec2', con=conn, schema='MZI_SCF_fatt', if_exists='replace')
+        conn.close()
+    """
+    
 
 
 @app.route("/upload", methods=['POST', 'GET'])
