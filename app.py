@@ -70,22 +70,14 @@ def uploadDB():
     engine = create_engine("mysql+pymysql://b07b4484224a54:edf76401@us-cdbr-east-06.cleardb.net/heroku_daac59f6173f49a")
     #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     table_name = request.form['selectdb']
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
-    os.chdir(filepath)
     #df1 = pd.read_csv(csvFile+".csv")
-    table_df1 = pd.read_sql_table(table_name,con=engine)
+    df1 = pd.read_sql_table(table_name,con=engine)
     col_names = df1.columns.values[1:]
-    xmin = df1["Wavelength"].min()
-    xmax = df1["Wavelength"].max()
-    xRange = [xmin, xmax]
-    dx = ''
     paramStr = col_names.tolist()
     flagLgd=True
     #if csvFile=='curv_dec' or csvFile=='curv_dec':
     varControl=''
-    dataJSON, layoutJSON, nameFig = gm(paramStr,xRange,dx,flagLgd,varControl,csvFile)
-    return render_template('generalPlot.html', paramStr=paramStr, dataJSON=dataJSON, layoutJSON=layoutJSON, csvFile=csvFile)
+    return render_template('generalPlot.html', paramStr=paramStr, dataJSON=dataJSON, layoutJSON=layoutJSON, table_name=table_name)
 
 
 @app.route("/csvtables2db", methods=['POST', 'GET'])
@@ -189,7 +181,7 @@ def uploader():
         #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
         dataJSON, layoutJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,varControl,csvfile)
         return render_template('generalPlot.html', paramStr=paramStr, dataJSON=dataJSON, layoutJSON=layoutJSON)
-#        return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON)
+     
 
 def gm(paramStr,xRange,dx, flagLgd,varControl,csvFile):
     basedir = os.path.abspath(os.path.dirname(__file__))
@@ -199,12 +191,12 @@ def gm(paramStr,xRange,dx, flagLgd,varControl,csvFile):
     x = df1["Wavelength"]
     df2 = fu.RefreshDataFrame(df1,xRange, paramStr)
     fig = fu.PlotParamIntLgd(df2,flagLgd)
-    dataJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
-    #graphJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
-    layoutJSON = json.dumps(fig.layout, cls=plotly.utils.PlotlyJSONEncoder)
+    #dataJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
+    graphJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
+    #layoutJSON = json.dumps(fig.layout, cls=plotly.utils.PlotlyJSONEncoder)
     nameFig = fu.PlotTxParam(df2, varControl, dx, 'Inc')
-    return dataJSON, layoutJSON, nameFig
-    #return graphJSON
+    #return dataJSON, layoutJSON, nameFig
+    return graphJSON,nameFig
 
 
 if __name__ == '__main__':

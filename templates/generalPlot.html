@@ -34,7 +34,7 @@
                 select.appendChild(el);
             }
         </script>
-      <input type="csvFile" id='csvFile' name="csvFile" value={{csvFile|safe}} readonly style="visibility:hidden;"><br>
+      <input type="text" id='signal' name="signal" value={{table_name|safe}} readonly style="visibility:hidden;"><br>
        <input type="submit" value="Refresh" >
     </form>
 
@@ -44,9 +44,8 @@
 
  <script type='text/javascript'>
       var myPlot = document.getElementById('chart');
-        data={{dataJSON|safe}}
-        layout={{layoutJSON|safe}}
-        Plotly.newPlot('chart',data,layout);
+        graph={{graphJSON|safe}}
+        Plotly.newPlot('chart',graph,{});
         myPlot.on('plotly_click', function(data){
              var pts = '';
              for(var i=0; i < data.points.length; i++){
