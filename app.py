@@ -179,8 +179,8 @@ def uploader():
         flagLgd = True
         varControl=''
         #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
-        dataJSON, layoutJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,varControl,csvfile)
-        return render_template('generalPlot.html', paramStr=paramStr, dataJSON=dataJSON, layoutJSON=layoutJSON)
+        graphJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,varControl,csvfile)
+        return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON)
      
 
 def gm(paramStr,xRange,dx, flagLgd,varControl,csvFile):
