@@ -75,7 +75,7 @@ def uploadDB():
     col_names = df.columns.values[1:]
     paramStr = col_names.tolist()
     flagLgd=True
-    fig = fu.PlotParamIntLgd(df,flagLgd)
+    fig = fu.PlotParamIntLgd(df,flagLgd,table_name[:2])
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     #if csvFile=='curv_dec' or csvFile=='curv_dec':
     varControl=''
@@ -137,7 +137,7 @@ def loadDB():
 
 @app.route("/upload", methods=['POST', 'GET'])
 def uploader():
-    #if request.method == 'POST':
+    if request.method == 'POST':
         uploaded_files = request.files.getlist('archivo')
         varControl = request.form['varControl']
         prefix = request.form['type'] #po or tx
@@ -172,13 +172,14 @@ def uploader():
         if varControl=='curv':
             curv = fu.Dist2Curv(param)
             dfParam["param"]=curv
-        table_name =prefix+varControl+direction
+        table_name =prefix+'_'+varControl+'_'+direction
         #df.to_csv("dataAll.csv", index=False)
         engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+        #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
         df.to_sql(table_name, engine, index=False)
         param = dfParam["param"].values
         paramStr = [str(x) for x in param]
-        flagLgd = 'True'
+        flagLgd = True
         #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
         graphJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,table_name)
         return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON)
@@ -186,15 +187,15 @@ def uploader():
 
 def gm(paramStr,xRange,dx, flagLgd,table_name):
     engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     df1 = pd.read_sql_table(table_name,con=engine)
     basedir = os.path.abspath(os.path.dirname(__file__))
     filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
     os.chdir(filepath)
     #df1 = pd.read_csv(csvFile+".csv")
-    
     x = df1["Wavelength"]
     df2 = fu.RefreshDataFrame(df1,xRange, paramStr)
-    fig = fu.PlotParamIntLgd(df2,flagLgd)
+    fig = fu.PlotParamIntLgd(df2,flagLgd,table_name)
     #dataJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     #layoutJSON = json.dumps(fig.layout, cls=plotly.utils.PlotlyJSONEncoder)

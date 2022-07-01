@@ -254,7 +254,7 @@ def CreateDataPlot(df):
         dataList.append({"x": df["Wavelength"].tolist(), "y": df[paramStr[i]].tolist(), "name": paramStr[i]})
     return dataList
 
-def PlotParamIntLgd(df,showLgd):
+def PlotParamIntLgd(df,showLgd,table_name):
     col_names = df.columns.values[1:]
     paramStr = col_names.tolist()
     NOF = len(paramStr)
@@ -283,8 +283,10 @@ def PlotParamIntLgd(df,showLgd):
     fig1.update_layout(hovermode='closest')
     fig1.update_xaxes(showgrid=False, title_font=dict(size=16, family='Helvetica'))
     fig1.update_yaxes(showgrid=False, title_font=dict(size=16, family='Helvetica'))
-    fig1.update_layout(xaxis=dict(title="Wavelength (nm)", linecolor="black", zeroline=False),
-                      yaxis=dict(title="Transmission (dBm)", linecolor="black",zeroline=False))
+    typeSignal=table_name[:2]
+    xLabel,yLabel=SettingXYlabels(typeSignal)
+    fig1.update_layout(xaxis=dict(title=xLabel, linecolor="black", zeroline=False),
+                      yaxis=dict(title=yLabel, linecolor="black",zeroline=False))
     #fig1.update_layout(plot_bgcolor="white", xaxis=dict(title="Wavelength (nm)", linecolor="black"),
     #                   yaxis=dict(title="Transmission (dBm)", linecolor="black"))
     #fig1.show()
@@ -350,29 +352,33 @@ def PlotTxParam(df1, dx, table_name):
                 bbox_extra_artists=(lgd,))
     return nameFig
 
+def SettingXYlabels(typeSignal):
+    if typeSignal == 'tx':  # Transmission
+        xLabel = 'Wavelength (nm)'
+        yLabel = 'Transmission (dB)'
+    elif typeSignal == 'po':  # Pout
+        xLabel = 'Wavelength (nm)'
+        yLabel = 'Output power (dBm)'  # FFT
+    elif typeSignal == 'ft':
+        xLabel = 'Spatial frequency (1/nm)'
+        yLabel = 'Magnitude (p.u)'
+    elif typeSignal == 'li':
+        xLabel = ''
+        yLabel = 'Wavelength (nm)'
+    elif typeSignal == 'ps':  # pout stability
+        xLabel = 'Time(s)'
+        yLabel = 'Output power (dBm)'
+    elif typeSignal == 'ws':  # wavelength stability
+        xLabel = 'Time(s)'
+        yLabel = 'Wavelength (nm)'
+        ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.2f'))
+    else:
+        xLabel = 'x'
+        yLabel = 'y'
+    return xLabel,yLabel
+
 def SettingAxis(fig, ax, xRange, yRange, dx, typeSignal):
-        if typeSignal == 'tx': #Transmission
-            xLabel = 'Wavelength (nm)'
-            yLabel = 'Transmission (dB)'
-        elif typeSignal == 'po': #Pout
-            xLabel = 'Wavelength (nm)'
-            yLabel = 'Output power (dBm)' #FFT
-        elif typeSignal == 'ft':
-            xLabel = 'Spatial frequency (1/nm)'
-            yLabel = 'Magnitude (p.u)'
-        elif typeSignal == 'li':
-            xLabel = ''
-            yLabel = 'Wavelength (nm)'
-        elif typeSignal == 'ps': #pout stability
-            xLabel = 'Time(s)'
-            yLabel = 'Output power (dBm)'
-        elif typeSignal == 'ws': #wavelength stability
-            xLabel = 'Time(s)'
-            yLabel = 'Wavelength (nm)'
-            ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.2f'))
-        else:
-            xLabel = 'x'
-            yLabel = 'y'
+        xLabel,yLabel= SettingXYlabels(typeSignal)
         if dx!='':
             ax.set_xticks(list(range(xRange[0], xRange[1] + 1, dx)))
         # ax.set_xticks(list(range(xRange[0], xRange[1]+1, 2))) #para el TEDFL parametrico
