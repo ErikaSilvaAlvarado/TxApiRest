@@ -30,11 +30,17 @@
     <p>Load CSV files </p>
     <form action="/upload" method="POST" enctype="multipart/form-data">
     <p><input type="file" name="archivo" multiple></p>
-    <p> <input type="checkbox" id= "isCurv" name="isCurv" /> <label for="isCurv"> Curvatura</label><br> </p>
+    <p> <label for="varControl"> Characterize by:</label>
+        <select name='varControl' id="varControl">
+            <option value="Temp">Temperature</option>
+            <option value="Curv">Curvature</option>
+            <option value="Torsion">Torsion</option>
+            <option value="Stab">stability</option>
+    </p>
     <p><input type="submit" value="Submit"></p>
     </form>
 
-    <a>href=loadCSV.html</a>
+    <a><href=loadCSV.html></a>
 
     <p><h1> Load CSV table to remote database:</h1></p>
     <form action="/csvtables2db" method="POST" enctype="multipart/form-data">

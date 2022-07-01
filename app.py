@@ -49,8 +49,8 @@ def cb():
         flagLgd = True
     else:
         flagLgd = False
-    csvFile = request.form['csvFile']
-    dataJSON, layoutJSON,nameFig = gm(paramStr, xRange, dx, flagLgd, varControl,csvFile)
+    csvFile = request.form['myTable']
+    graphJSON,nameFig = gm(paramStr, xRange, dx, flagLgd, varControl,csvFile)
     #return render_template('customPlot.html', graphJSON=graphJSON)
     #return render_template('customPlot.html', graphJSON=graphJSON, dataJSON = dataJSON)
     return render_template('customPlot.html', dataJSON=dataJSON, layoutJSON=layoutJSON,nameFig=nameFig)
@@ -71,11 +71,11 @@ def uploadDB():
     #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     table_name = request.form['selectdb']
     #df1 = pd.read_csv(csvFile+".csv")
-    df1 = pd.read_sql_table(table_name,con=engine)
-    col_names = df1.columns.values[1:]
+    df = pd.read_sql_table(table_name,con=engine)
+    col_names = df.columns.values[1:]
     paramStr = col_names.tolist()
     flagLgd=True
-    fig = fu.PlotParamIntLgd(df1,flagLgd)
+    fig = fu.PlotParamIntLgd(df,flagLgd)
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     #if csvFile=='curv_dec' or csvFile=='curv_dec':
     varControl=''
@@ -93,6 +93,8 @@ def loadDB():
     filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
     os.chdir(filepath)
     #procedimiento para crear las tablas
+    varControl = request.form['varControl']
+    table_name = varControl+
     df1 = pd.read_csv("curv_dec.csv")   
     df2 = pd.read_csv("curv_inc.csv")
     df3 = pd.read_csv("temp_dec.csv")
@@ -139,7 +141,7 @@ def loadDB():
 def uploader():
     #if request.method == 'POST':
         uploaded_files = request.files.getlist('archivo')
-        isCurv= request.form.get('isCurv')
+        varControl = request.form['varControl']
         basedir = os.path.abspath(os.path.dirname(__file__))
         filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
         for file in uploaded_files:
@@ -149,54 +151,55 @@ def uploader():
             file.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
         os.chdir(filepath)
         filesCSV = glob.glob('*.CSV')
+        prefix='Po'
         for i in filesCSV:
-            if i=='EDFA.CSV':
-                dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
-            elif i=='CAR.CSV' or i=='car.csv' or i=='CAR.csv' or i=='car.CSV':
+            if i=='CAR.CSV' or i=='car.csv' or i=='CAR.csv' or i=='car.CSV':
                 dfParam = pd.read_csv(i, skiprows=1, header=None, names=["fileName", "param"])
-        #dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
-        #dfEDFA = pd.read_csv('./Uploads/' +'EDFA.csv', header=22, names=["xEDFA", "yEDFA"])
-        #dfEDFA = pd.read_csv(filepath + '/EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
+                param = dfParam["param"].tolist()
+                if param[0]<param[1]:
+                    direction='Inc'
+                else:
+                    direction='Dec'
+            elif i=='EDFA.CSV':
+                prefix='Tx'
+                dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
+        if prefix='Tx':
+            df = fu.CreateTxDataFrame(filepath, dfEDFA, dfParam)  # require EDFA and fileName  
         xmin = dfEDFA["xEDFA"].min()
         xmax = dfEDFA["xEDFA"].max()
         xRange = [xmin, xmax]
         dx = ''
-        #dfParam = pd.read_csv('./Uploads/'+'car.csv', skiprows=1, header=None, names=["fileName", "param"])
-        #dfParam = pd.read_csv(filepath + '/CAR.CSV', skiprows=1, header=None, names=["fileName", "param"])
-        param = dfParam["param"].tolist()
-        if isCurv:
+        if varControl=='Curv'
             curv = fu.Dist2Curv(param)
             dfParam["param"]=curv
-        df = fu.CreateTxDataFrame(filepath, dfEDFA, dfParam)  # require EDFA and fileName
-        csvfile="dataAll"
-        df.to_csv("dataAll.csv", index=False)
+        table_name =prefix+varControl+direction
+        #df.to_csv("dataAll.csv", index=False)
+        engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+        df.to_sql(table_name, engine, index=False)
         param = dfParam["param"].values
         paramStr = [str(x) for x in param]
-        """
-        if isCurv:
-            paramStr = ["%.6f" % x for x in param]
-        else:
-            paramStr = ["%.1f" % x for x in param]
-        """
-        flagLgd = True
-        varControl=''
+        flagLgd = True'
         #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
-        graphJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,varControl,csvfile)
+        graphJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,table_name)
         return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON)
      
 
-def gm(paramStr,xRange,dx, flagLgd,varControl,csvFile):
+def gm(paramStr,xRange,dx, flagLgd,table_name):
+    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    df1 = pd.read_sql_table(table_name,con=engine)
+    """
     basedir = os.path.abspath(os.path.dirname(__file__))
     filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
     os.chdir(filepath)
     df1 = pd.read_csv(csvFile+".csv")
+    """
     x = df1["Wavelength"]
     df2 = fu.RefreshDataFrame(df1,xRange, paramStr)
     fig = fu.PlotParamIntLgd(df2,flagLgd)
     #dataJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
-    graphJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     #layoutJSON = json.dumps(fig.layout, cls=plotly.utils.PlotlyJSONEncoder)
-    nameFig = fu.PlotTxParam(df2, varControl, dx, 'Inc')
+    nameFig = fu.PlotTxParam(df2, dx, table_name)
     #return dataJSON, layoutJSON, nameFig
     return graphJSON,nameFig
 

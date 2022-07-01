@@ -267,7 +267,9 @@ def PlotParamIntLgd(df,showLgd):
     #fig1.show()
     return fig1
 
-def PlotTxParam(df1, varControl, dx, direction):
+def PlotTxParam(df1, dx, table_name):
+    prefix= table_name[:2]
+    varControl= table_name[2:6]
     col_names = df1.columns.values[1:]
     paramStr = col_names.tolist()
     NOF = len(paramStr)
@@ -318,30 +320,30 @@ def PlotTxParam(df1, varControl, dx, direction):
     #dx = int(np.round((xmax-xmin)/5,1))
     ax.text(1554.5, -15, "P", color=colorLegend[m])
     """
-    fig, ax = SettingAxis(fig, ax, [xmin, xmax], [ymin, ymax], dx, 'Tx')
+    fig, ax = SettingAxis(fig, ax, [xmin, xmax], [ymin, ymax], dx, prefix)
     # Save figure
-    nameFig= 'Tx' + varControl + direction + '.png'
+    nameFig=  table_name + '.png'
     plt.savefig(nameFig, dpi=300, transparent=True, bbox_inches='tight',
                 bbox_extra_artists=(lgd,))
     return nameFig
 
 def SettingAxis(fig, ax, xRange, yRange, dx, typeSignal):
-        if typeSignal == 'Tx':
+        if typeSignal == 'Tx': #Transmission
             xLabel = 'Wavelength (nm)'
             yLabel = 'Transmission (dB)'
-        elif typeSignal == 'Pout':
+        elif typeSignal == 'Po': #Pout
             xLabel = 'Wavelength (nm)'
-            yLabel = 'Output power (dBm)'
-        elif typeSignal == 'FFT':
+            yLabel = 'Output power (dBm)' #FFT
+        elif typeSignal == 'FT':
             xLabel = 'Spatial frequency (1/nm)'
             yLabel = 'Magnitude (p.u)'
-        elif typeSignal == 'Lin':
+        elif typeSignal == 'Li':
             xLabel = ''
             yLabel = 'Wavelength (nm)'
-        elif typeSignal == 'PoutStab':
+        elif typeSignal == 'PS': #pout stability
             xLabel = 'Time(s)'
             yLabel = 'Output power (dBm)'
-        elif typeSignal == 'lambdaStab':
+        elif typeSignal == 'WS': #wavelength stability
             xLabel = 'Time(s)'
             yLabel = 'Wavelength (nm)'
             ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.2f'))
