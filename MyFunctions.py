@@ -137,7 +137,7 @@ def CreateTxDataFrame(filepath,dfEDFA, dfParam):
 def CreatePoutDataFrame(filepath,dfParam):
     files = dfParam["fileName"].tolist()
     param = dfParam["param"].tolist()
-    [x,y,L] = ReadFolderPout(files, [1300 1700], [-100,5])
+    [x,y,L] = ReadFolderPout(files, [1300, 1700], [-100,5])
     df = List2df(x,y,L,param)
     return df
 
