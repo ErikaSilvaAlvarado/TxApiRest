@@ -182,7 +182,7 @@ def uploader():
         flagLgd = True
         #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
         graphJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,table_name)
-        return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON)
+        return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON, table_name=table_name)
      
 
 def gm(paramStr,xRange,dx, flagLgd,table_name):
