@@ -328,22 +328,22 @@ def PlotTxParam(df1, dx, table_name):
     return nameFig
 
 def SettingAxis(fig, ax, xRange, yRange, dx, typeSignal):
-        if typeSignal == 'Tx': #Transmission
+        if typeSignal == 'tx': #Transmission
             xLabel = 'Wavelength (nm)'
             yLabel = 'Transmission (dB)'
-        elif typeSignal == 'Po': #Pout
+        elif typeSignal == 'po': #Pout
             xLabel = 'Wavelength (nm)'
             yLabel = 'Output power (dBm)' #FFT
-        elif typeSignal == 'FT':
+        elif typeSignal == 'ft':
             xLabel = 'Spatial frequency (1/nm)'
             yLabel = 'Magnitude (p.u)'
-        elif typeSignal == 'Li':
+        elif typeSignal == 'li':
             xLabel = ''
             yLabel = 'Wavelength (nm)'
-        elif typeSignal == 'PS': #pout stability
+        elif typeSignal == 'ps': #pout stability
             xLabel = 'Time(s)'
             yLabel = 'Output power (dBm)'
-        elif typeSignal == 'WS': #wavelength stability
+        elif typeSignal == 'ws': #wavelength stability
             xLabel = 'Time(s)'
             yLabel = 'Wavelength (nm)'
             ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.2f'))

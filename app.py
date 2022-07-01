@@ -96,10 +96,10 @@ def loadDB():
     df2 = pd.read_csv("curv_inc.csv")
     df3 = pd.read_csv("temp_dec.csv")
     df4 = pd.read_csv("temp_inc.csv")
-    df1.to_sql('Tx_curv_dec', engine, index=False)
-    df2.to_sql('Tx_curv_inc', engine, index=False)
-    df3.to_sql('Tx_temp_dec', engine, index=False)
-    df4.to_sql('Tx_temp_inc', engine, index=False)
+    df1.to_sql('tx_curv_dec', engine, index=False)
+    df2.to_sql('tx_curv_inc', engine, index=False)
+    df3.to_sql('tx_temp_dec', engine, index=False)
+    df4.to_sql('tx_temp_inc', engine, index=False)
     
     """
     #para borar tablas
@@ -116,10 +116,10 @@ def loadDB():
     return render_template('index.html',table_names=table_names)
     """    
     #para borar en localhost pero en cleardb no creo haya funcionado
-    engine=drop_table('Tx_temp_inc2', engine)
-    engine=drop_table('Tx_temp_dec2', engine)
-    engine=drop_table('Tx_curv_inc2', engine)
-    engine=drop_table('Tx_curv_dec2', engine)
+    engine=drop_table('tx_temp_inc2', engine)
+    engine=drop_table('tx_temp_dec2', engine)
+    engine=drop_table('tx_curv_inc2', engine)
+    engine=drop_table('tx_curv_dec2', engine)
     
     #print(table_df1)
     """
@@ -128,7 +128,7 @@ def loadDB():
     with engine.connect() as conn, conn.begin():
         df = pd.read_sql('select * from Tx_curv_dec2 limit 1', con=conn)
         print (df.head())
-        df.to_sql('Tx_curv_dec2', con=conn, schema='MZI_SCF_fatt', if_exists='replace')
+        df.to_sql('tx_curv_dec2', con=conn, schema='MZI_SCF_fatt', if_exists='replace')
         conn.close()
     """
     
@@ -154,19 +154,19 @@ def uploader():
                 dfParam = pd.read_csv(i, skiprows=1, header=None, names=["fileName", "param"])
                 param = dfParam["param"].tolist()
                 if param[0]<param[1]:
-                    direction='Inc'
+                    direction='inc'
                 else:
-                    direction='Dec'
+                    direction='dec'
             elif i=='EDFA.CSV':
-                prefix='Tx'
+                prefix='tx'
                 dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
-        if prefix=='Tx':
+        if prefix=='tx':
             df = fu.CreateTxDataFrame(filepath, dfEDFA, dfParam)  # require EDFA and fileName  
         xmin = dfEDFA["xEDFA"].min()
         xmax = dfEDFA["xEDFA"].max()
         xRange = [xmin, xmax]
         dx = ''
-        if varControl=='Curv':
+        if varControl=='curv':
             curv = fu.Dist2Curv(param)
             dfParam["param"]=curv
         table_name =prefix+varControl+direction
