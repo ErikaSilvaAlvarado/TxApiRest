@@ -43,17 +43,16 @@ def cb():
     xmin = float(request.form['xmin'])
     xmax = float(request.form['xmax'])
     dx = int(request.form['dx'])
-    varControl = request.form['varControl']
     xRange = [xmin, xmax]
     if request.form.get('Leyenda'):
         flagLgd = True
     else:
         flagLgd = False
-    csvFile = request.form['myTable']
-    graphJSON,nameFig = gm(paramStr, xRange, dx, flagLgd, varControl,csvFile)
+    table_name = request.form['table_name']
+    graphJSON,nameFig = gm(paramStr, xRange, dx, flagLgd, table_name)
     #return render_template('customPlot.html', graphJSON=graphJSON)
     #return render_template('customPlot.html', graphJSON=graphJSON, dataJSON = dataJSON)
-    return render_template('customPlot.html', dataJSON=dataJSON, layoutJSON=layoutJSON,nameFig=nameFig)
+    return render_template('customPlot.html',graphJSON=graphJSON ,nameFig=nameFig)
     
 @app.route("/")
 def listingTables():
