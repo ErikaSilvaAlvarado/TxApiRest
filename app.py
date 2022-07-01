@@ -75,9 +75,11 @@ def uploadDB():
     col_names = df1.columns.values[1:]
     paramStr = col_names.tolist()
     flagLgd=True
+    fig = fu.PlotParamIntLgd(df1,flagLgd)
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     #if csvFile=='curv_dec' or csvFile=='curv_dec':
     varControl=''
-    return render_template('generalPlot.html', paramStr=paramStr, dataJSON=dataJSON, layoutJSON=layoutJSON, table_name=table_name)
+    return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON, table_name=table_name)
 
 
 @app.route("/csvtables2db", methods=['POST', 'GET'])
@@ -112,7 +114,7 @@ def loadDB():
     #for table_name in table_names:
     #    print(f"Table:{table_name}")
     # renderizamos la plantilla "index.html"
-    return table_names
+    return render_template('index.html',table_names=table_names)
     """    
     #para borar en localhost pero en cleardb no creo haya funcionado
     engine=drop_table('Tx_temp_inc2', engine)
