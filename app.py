@@ -154,12 +154,17 @@ def uploader():
         filesCSV = glob.glob('*.CSV')
         for i in filesCSV:
             if i=='CAR.CSV' or i=='car.csv' or i=='CAR.csv' or i=='car.CSV':
-                dfParam = pd.read_csv(i, skiprows=1, header=None, names=["fileName", "param"])
+                if varControl=='curv':
+                    curv = fu.Dist2Curv(param)
+                    dfParam["param"]=curv
+                else:
+                    dfParam = pd.read_csv(i, skiprows=1, header=None, names=["fileName", "param"])
                 param = dfParam["param"].tolist()
                 if param[0]<param[1]:
                     direction='inc'
                 else:
                     direction='dec'
+            
             elif i=='EDFA.CSV':
                 #prefix='tx'
                 dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
@@ -211,7 +216,7 @@ def eraseTable():
     # para borrar tabla
     engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
     #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
-    engine.execute("DROP table IF EXISTS table_name")
+    engine.execute("DROP table IF EXISTS"+table_name)
     inspector = inspect(engine)
     table_names = inspector.get_table_names()
     #for table_name in table_names:
