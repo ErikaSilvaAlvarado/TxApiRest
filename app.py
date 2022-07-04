@@ -216,7 +216,7 @@ def eraseTable():
     # para borrar tabla
     engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
     #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
-    engine.execute("DROP table IF EXISTS"+table_name)
+    engine.execute("DROP table IF EXISTS "+table_name)
     inspector = inspect(engine)
     table_names = inspector.get_table_names()
     #for table_name in table_names:
