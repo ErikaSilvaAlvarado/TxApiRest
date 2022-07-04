@@ -155,10 +155,10 @@ def uploader():
         for i in filesCSV:
             if i=='CAR.CSV' or i=='car.csv' or i=='CAR.csv' or i=='car.CSV':
                 dfParam = pd.read_csv(i, skiprows=1, header=None, names=["fileName", "param"])
+                param = dfParam["param"].tolist()
                 if varControl=='curv':
                     curv = fu.Dist2Curv(param)
                     dfParam["param"]=curv
-                param = dfParam["param"].tolist()
                 paramStr = [str(x) for x in param]
                 if param[0]<param[1]:
                     direction='inc'
