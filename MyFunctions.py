@@ -462,7 +462,6 @@ def Dist2Curv(param):
     L = 0.15 #en metros
     param = np.array(param)
     p2 = np.power(param*1e-3, 2)    #llevar d de um a m
-    #curv = (2 * param * 1e-6) / (p2 + L * L)
     curv = np.around(2 * param*1e-3/(p2+L*L), 3)
     #
     return curv #curv en 1/m
