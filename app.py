@@ -154,17 +154,16 @@ def uploader():
         filesCSV = glob.glob('*.CSV')
         for i in filesCSV:
             if i=='CAR.CSV' or i=='car.csv' or i=='CAR.csv' or i=='car.CSV':
+                dfParam = pd.read_csv(i, skiprows=1, header=None, names=["fileName", "param"])
                 if varControl=='curv':
                     curv = fu.Dist2Curv(param)
                     dfParam["param"]=curv
-                else:
-                    dfParam = pd.read_csv(i, skiprows=1, header=None, names=["fileName", "param"])
                 param = dfParam["param"].tolist()
+                paramStr = [str(x) for x in param]
                 if param[0]<param[1]:
                     direction='inc'
                 else:
                     direction='dec'
-            
             elif i=='EDFA.CSV':
                 #prefix='tx'
                 dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
@@ -176,16 +175,11 @@ def uploader():
         xmax = df["Wavelength"].max()
         xRange = [xmin, xmax]
         dx = ''
-        if varControl=='curv':
-            curv = fu.Dist2Curv(param)
-            dfParam["param"]=curv
         table_name =prefix+'_'+varControl+'_'+direction
         #df.to_csv("dataAll.csv", index=False)
         engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
         #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
         df.to_sql(table_name, engine, index=False)
-        param = dfParam["param"].values
-        paramStr = [str(x) for x in param]
         flagLgd = True
         #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
         graphJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,table_name)
