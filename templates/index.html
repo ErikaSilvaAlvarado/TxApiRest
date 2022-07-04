@@ -49,10 +49,30 @@
     </form>
 
 
-    <p><h1> Load CSV table to remote database:</h1></p>
+    <p><h1> Option3: Load CSV table to remote database:</h1></p>
     <form action="/csvtables2db" method="POST" enctype="multipart/form-data">
     <p><input type="submit" value="Load2DB"></p>
     </form>
+
+ <p><h1> Option4:Erase database:</h1></p>
+    <form name="form_erase" action="/erase_table" method="POST" >
+    <label for="erase_db">Choose Databases(s):</label>
+            <select name='erase_db' id="erase_db" multiple >
+            </select>
+                <script>
+                    var select = document.getElementById("erase_db");
+                    var options = {{table_names|safe}};
+                    for(var i = 0; i < options.length; i++) {
+                        var opt = options[i];
+                        var el = document.createElement("option");
+                        el.textContent = opt;
+                        el.value = opt;
+                        select.appendChild(el);
+                    }
+                </script>        
+        <br>
+        <p><input type="erase" value="Erase"></p>
+     </form>
 
  </body>
 </html>

@@ -104,6 +104,8 @@ def loadDB():
     
     """
     #para borar tablas
+    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     engine.execute("DROP table IF EXISTS Tx_curv_inc2")
     engine.execute("DROP table IF EXISTS Tx_curv_dec2")
     engine.execute("DROP table IF EXISTS Tx_temp_inc2")
@@ -159,7 +161,7 @@ def uploader():
                 else:
                     direction='dec'
             elif i=='EDFA.CSV':
-                prefix='tx'
+                #prefix='tx'
                 dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
         if prefix=='tx':
             df = fu.CreateTxDataFrame(filepath, dfEDFA, dfParam)  # require EDFA and fileName  
@@ -186,8 +188,8 @@ def uploader():
      
 
 def gm(paramStr,xRange,dx, flagLgd,table_name):
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     df1 = pd.read_sql_table(table_name,con=engine)
     basedir = os.path.abspath(os.path.dirname(__file__))
     filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
@@ -203,6 +205,19 @@ def gm(paramStr,xRange,dx, flagLgd,table_name):
     #return dataJSON, layoutJSON, nameFig
     return graphJSON,nameFig
 
+@app.route("/erase_table", methods=['POST', 'GET'])
+def eraseTable():
+    table_name = request.form['erase_db']
+    # para borrar tabla
+    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    engine.execute("DROP table IF EXISTS table_name")
+    inspector = inspect(engine)
+    table_names = inspector.get_table_names()
+    #for table_name in table_names:
+    #    print(f"Table:{table_name}")
+    # renderizamos la plantilla "index.html"
+    return render_template('index.html',table_names=table_names)
 
 if __name__ == '__main__':
     # Iniciamos la aplicación
