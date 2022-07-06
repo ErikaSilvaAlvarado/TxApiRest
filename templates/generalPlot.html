@@ -9,7 +9,8 @@
 
  <body>
     <h1>All Signals</h1>
-   <form name="form1" action="/callback" method="POST" >
+    <div id="chart" class="chart" ></div>
+    <form name="form1" action="/callback" method="POST" >
         <label for="xmin">xmin:</label> <input type="text" id='xmin' name="xmin"> <br>
         <input type="text" id='xmax' name="xmax"> <label for="xmax">xmax:</label><br>
        <input type="text" id='dx' name="dx"><br>
@@ -30,10 +31,11 @@
         </script>
       <input type="text" id='table_name' name="table_name" value={{table_name|safe}} ><br>
        <input type="submit" value="Refresh" >
-    </form>
+     </form>
 
-    <div id="chart" class="chart" ></div>
 <h6><a href="/">Return to index page</a></h6>
+
+<a href="{{ url_for('downloadCSV', filename='dataAll.csv') }}">Descargar como CSV</a>
  </body>
 
  <script type='text/javascript'>

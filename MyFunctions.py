@@ -449,12 +449,13 @@ def PlotParamListsInt(x,y,param):
             x=A,
             y=B,
             legendgroup = 'lgd'+str(i),
-            name=str(param[i]),
+            #name=str(param[i]),
+            name=param[i],
             mode="lines",
             line_color=colorLegend[i],
             ))
     #fig1.show()
-    return
+    return fig1
 
 
 def Dist2Curv(param):
@@ -471,10 +472,12 @@ def PlotSignalInt(x,y):
     fig.add_trace(go.Scatter(
             x=x,
             y=y,
-            mode="lines",
+            #mode="lines",
+            mode="markers",
             line_color='black',
             ))
-    fig.show()
+    #fig.show()
+    return fig
 
 #paramSel = SelectingParam(param, indexSel)
 def SelectingParam(param, indexSel):
@@ -843,16 +846,28 @@ def CalculateLaserParameters(x, y, prom, dist):
 def PointsLinearity(df1, val):
     col_names = df1.columns.values[1:]
     paramStr = col_names.tolist()
+    """
     NOF = len(paramStr)
+    dfVal=pd.DataFrame()
+    dfVal['Wavelength'] =df1['Wavelength']
     if val == 'max':
         for i in range(NOF):
-            df1['max' + str(i)] = df1.iloc[argrelextrema(df1[paramStr[i]].values, np.greater_equal, order=15)[0]][paramStr[i]]
+            #df1['max' + str(i)] = df1.iloc[argrelextrema(df1[paramStr[i]].values, np.greater_equal, order=15)[0]][paramStr[i]]
+            dfVal['max' + str(i)] = df1.iloc[argrelextrema(df1[paramStr[i]].values, np.greater_equal, order=15)[0]][
+                paramStr[i]]
     elif val == 'min':
         for i in range(NOF):
-            df1['min' + str(i)] = df1.iloc[argrelextrema(df1[paramStr[i]].values, np.less_equal, order=15)[0]][paramStr[i]]
+            #df1['min' + str(i)] = df1.iloc[argrelextrema(df1[paramStr[i]].values, np.less_equal, order=15)[0]][paramStr[i]]
+            dfVal['min' + str(i)] = df1.iloc[argrelextrema(df1[paramStr[i]].values, np.less_equal, order=15)[0]][
+                paramStr[i]]
     else:
         #falta verificar
         valY1 = df1[(df1[paramStr] >= val)][paramStr]
         kval = df1[(df1[paramStr] >= val)][paramStr].idxmin()
         valX1 = df1["Wavelength"].loc[kval].tolist()
-    return df1
+    #return df1
+    """
+    kmax = df1[paramStr].idxmax()
+    lambdaMax = df1["Wavelength"].loc[kmax]
+    lambdaMax  = lambdaMax.tolist()
+    return lambdaMax

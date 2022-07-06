@@ -23,12 +23,20 @@ from sqlalchemy.ext.declarative import declarative_base
 # instancia del objeto Flask
 
 app = Flask(__name__, static_folder='/static')
-app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f'
-#app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt'
+#app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f'
+app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] =False
 
 # Carpeta de subida
 app.config['UPLOAD_FOLDER'] = 'Uploads'
+
+@app.route('/downloadCSV/<path:filename>', methods=['GET', 'POST'])
+def downloadCSV(filename):
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+    os.chdir(filepath)
+    # Returning file from appended path
+    return send_from_directory(directory=filepath, path=filename)
 
 @app.route('/downloads/<path:filename>', methods=['GET', 'POST'])
 def download(filename):
@@ -57,8 +65,8 @@ def cb():
     
 @app.route("/")
 def listingTables():
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     inspector = inspect(engine)
     table_names = inspector.get_table_names()
     # renderizamos la plantilla "index.html"
@@ -67,15 +75,17 @@ def listingTables():
 @app.route("/loaded_database", methods=['POST', 'GET'])
 def uploadDB():
     #csvFile = request.form['']
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     table_name = request.form['selectdb']
     #df1 = pd.read_csv(csvFile+".csv")
     df = pd.read_sql_table(table_name,con=engine)
+    lambdaMax= fu.PointsLinearity(df, 'max')
     col_names = df.columns.values[1:]
     paramStr = col_names.tolist()
     flagLgd=True
-    fig = fu.PlotParamIntLgd(df,flagLgd,table_name[:2])
+    #fig = fu.PlotParamIntLgd(df,flagLgd,table_name)
+    fig =fu.PlotSignalInt(paramStr,lambdaMax)
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     #if csvFile=='curv_dec' or csvFile=='curv_dec':
     varControl=''
@@ -85,8 +95,8 @@ def uploadDB():
 @app.route("/csvtables2db", methods=['POST', 'GET'])
 def loadDB():
     basedir = os.path.abspath(os.path.dirname(__file__))
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     #metadata = MetaData()
     #metadata.reflect(engine)
     basedir = os.path.abspath(os.path.dirname(__file__))
@@ -159,6 +169,7 @@ def uploader():
                 if varControl=='curv':
                     curv = fu.Dist2Curv(param)
                     dfParam["param"]=curv
+                param = dfParam["param"].tolist()
                 paramStr = [str(x) for x in param]
                 if param[0]<param[1]:
                     direction='inc'
@@ -176,10 +187,11 @@ def uploader():
         xRange = [xmin, xmax]
         dx = ''
         table_name =prefix+'_'+varControl+'_'+direction
-        #df.to_csv("dataAll.csv", index=False)
-        engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-        #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
-        df.to_sql(table_name, engine, index=False)
+        df.to_csv("dataAll.csv", index=False)
+        #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+        engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+        df1=df
+        df1.to_sql(table_name, engine, index=False)
         flagLgd = True
         #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
         graphJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,table_name)
@@ -187,15 +199,18 @@ def uploader():
      
 
 def gm(paramStr,xRange,dx, flagLgd,table_name):
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     df1 = pd.read_sql_table(table_name,con=engine)
     basedir = os.path.abspath(os.path.dirname(__file__))
     filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
     os.chdir(filepath)
     #df1 = pd.read_csv(csvFile+".csv")
-    x = df1["Wavelength"]
+    xmin = df1["Wavelength"].min()
+    xmax = df1["Wavelength"].max()
+    xRange = [xmin, xmax]
     df2 = fu.RefreshDataFrame(df1,xRange, paramStr)
+    
     fig = fu.PlotParamIntLgd(df2,flagLgd,table_name)
     #dataJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
@@ -208,8 +223,8 @@ def gm(paramStr,xRange,dx, flagLgd,table_name):
 def eraseTable():
     table_name = request.form['erase_db']
     # para borrar tabla
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     engine.execute("DROP table IF EXISTS "+table_name)
     inspector = inspect(engine)
     table_names = inspector.get_table_names()
