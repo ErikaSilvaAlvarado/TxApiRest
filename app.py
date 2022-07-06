@@ -84,8 +84,8 @@ def uploadDB():
     col_names = df.columns.values[1:]
     paramStr = col_names.tolist()
     flagLgd=True
-    #fig = fu.PlotParamIntLgd(df,flagLgd,table_name)
-    fig =fu.PlotSignalInt(paramStr,lambdaMax)
+    fig = fu.PlotParamIntLgd(df,flagLgd,table_name)
+    #fig =fu.PlotSignalInt(paramStr,lambdaMax)
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     #if csvFile=='curv_dec' or csvFile=='curv_dec':
     varControl=''
