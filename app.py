@@ -187,7 +187,7 @@ def uploader():
         xRange = [xmin, xmax]
         dx = ''
         table_name =prefix+'_'+varControl+'_'+direction
-        df.to_csv("dataAll.csv", index=False)
+        #df.to_csv("dataAll.csv", index=False)
         engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
         #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
         df1=df
@@ -210,6 +210,7 @@ def gm(paramStr,xRange,dx, flagLgd,table_name):
     xmax = df1["Wavelength"].max()
     xRange = [xmin, xmax]
     df2 = fu.RefreshDataFrame(df1,xRange, paramStr)
+    df2.to_csv("dataAll.csv", index=False)
     fig = fu.PlotParamIntLgd(df2,flagLgd,table_name)
     #dataJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
