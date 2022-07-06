@@ -12,7 +12,7 @@
     <div id="chart" class="chart" ></div>
     <form name="form1" action="/callback" method="POST" >
         <label for="xmin">xmin:</label> <input type="text" id='xmin' name="xmin"> <br>
-        <input type="text" id='xmax' name="xmax"> <label for="xmax">xmax:</label><br>
+        <label for="xmax">xmax:</label> <input type="text" id='xmax' name="xmax"> <br>
        <input type="text" id='dx' name="dx"><br>
        <label for="Leyenda">Insertar leyenda</label> <input type="checkbox" id="Leyenda" name="Leyenda"/><br>
         <label for="selectValues">Choose signal(s):</label>
@@ -35,7 +35,7 @@
 
 <h6><a href="/">Return to index page</a></h6>
 
-<a href="{{ url_for('downloadCSV', filename='dataAll.csv') }}">Descargar como CSV</a>
+
  </body>
 
  <script type='text/javascript'>

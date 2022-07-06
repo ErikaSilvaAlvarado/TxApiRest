@@ -15,7 +15,8 @@
   <script>
       Plotly.newPlot('chart',{{graphJSON|safe}},{});
    </script>
-<a href="{{ url_for('download', filename=nameFig) }}">Descargar como imagen PNG</a>
+<h6><a href="{{ url_for('download', filename=nameFig) }}">Descargar como imagen PNG</a> </h6>
+<h6><a href="{{ url_for('downloadCSV', filename='dataAll.csv') }}">Descargar como CSV</a> </h6>
 <script type='text/javascript'>
     var myPlot = document.getElementById('chart')
     myPlot.on('plotly_click', function(data){
