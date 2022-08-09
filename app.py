@@ -51,16 +51,17 @@ def cb():
     paramStr = request.form.getlist('selectValues')
     xmin = float(request.form['xmin'])
     xmax = float(request.form['xmax'])
+    ymin = float(request.form['ymin'])
+    ymax = float(request.form['ymax'])
     dx = int(request.form['dx'])
     xRange = [xmin, xmax]
+    yRange = [ymin, ymax]
     if request.form.get('Leyenda'):
         flagLgd = True
     else:
         flagLgd = False
     table_name = request.form['table_name']
-    graphJSON,nameFig = gm(paramStr, xRange, dx, flagLgd, table_name)
-    #return render_template('customPlot.html', graphJSON=graphJSON)
-    #return render_template('customPlot.html', graphJSON=graphJSON, dataJSON = dataJSON)
+    graphJSON,nameFig = gm(paramStr, xRange, dx,yRange, flagLgd, table_name)
     return render_template('customPlot.html',graphJSON=graphJSON ,nameFig=nameFig)
     
 @app.route("/")
@@ -75,8 +76,8 @@ def listingTables():
 @app.route("/loaded_database", methods=['POST', 'GET'])
 def uploadDB():
     #csvFile = request.form['']
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     table_name = request.form['selectdb']
     #df1 = pd.read_csv(csvFile+".csv")
     df = pd.read_sql_table(table_name,con=engine)
@@ -95,8 +96,8 @@ def uploadDB():
 @app.route("/csvtables2db", methods=['POST', 'GET'])
 def loadDB():
     basedir = os.path.abspath(os.path.dirname(__file__))
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     #metadata = MetaData()
     #metadata.reflect(engine)
     basedir = os.path.abspath(os.path.dirname(__file__))
@@ -144,8 +145,6 @@ def loadDB():
         df.to_sql('tx_curv_dec2', con=conn, schema='MZI_SCF_fatt', if_exists='replace')
         conn.close()
     """
-    
-
 
 @app.route("/upload", methods=['POST', 'GET'])
 def uploader():
@@ -188,17 +187,16 @@ def uploader():
         dx = ''
         table_name =prefix+'_'+varControl+'_'+direction
         #df.to_csv("dataAll.csv", index=False)
-        engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-        #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+        #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+        engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
         df1=df
         df1.to_sql(table_name, engine, index=False)
         flagLgd = True
         #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
-        graphJSON, nameFig = gm(paramStr,xRange,dx, flagLgd,table_name)
+        graphJSON, nameFig = gm(paramStr,xRange,dx,yRange, flagLgd,table_name)
         return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON, table_name=table_name)
      
-
-def gm(paramStr,xRange,dx, flagLgd,table_name):
+def gm(paramStr,xRange,dx, yRange, flagLgd,table_name):
     engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
     #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     df1 = pd.read_sql_table(table_name,con=engine)
@@ -208,14 +206,16 @@ def gm(paramStr,xRange,dx, flagLgd,table_name):
     #df1 = pd.read_csv(csvFile+".csv")
     xmin = df1["Wavelength"].min()
     xmax = df1["Wavelength"].max()
-    xRange = [xmin, xmax]
+    ymin = -80
+    ymax = 0
+    #xRange = [xmin, xmax]
     df2 = fu.RefreshDataFrame(df1,xRange, paramStr)
     df2.to_csv("dataAll.csv", index=False)
     fig = fu.PlotParamIntLgd(df2,flagLgd,table_name)
     #dataJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     #layoutJSON = json.dumps(fig.layout, cls=plotly.utils.PlotlyJSONEncoder)
-    nameFig = fu.PlotTxParam(df2, dx, table_name)
+    nameFig = fu.PlotTxParam(df2, xRange,dx, yRange,table_name)
     #return dataJSON, layoutJSON, nameFig
     return graphJSON,nameFig
 
@@ -223,8 +223,8 @@ def gm(paramStr,xRange,dx, flagLgd,table_name):
 def eraseTable():
     table_name = request.form['erase_db']
     # para borrar tabla
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     engine.execute("DROP table IF EXISTS "+table_name)
     inspector = inspect(engine)
     table_names = inspector.get_table_names()

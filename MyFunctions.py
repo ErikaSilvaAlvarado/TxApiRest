@@ -137,7 +137,7 @@ def CreateTxDataFrame(filepath,dfEDFA, dfParam):
 def CreatePoutDataFrame(filepath,dfParam):
     files = dfParam["fileName"].tolist()
     param = dfParam["param"].tolist()
-    [x,y,L] = ReadFolderPout(files, [1300, 1700], [-100,5])
+    [x,y,L] = ReadFolderPout(files, [850, 1900], [-100,5])
     df = List2df(x,y,L,param)
     return df
 
@@ -292,9 +292,9 @@ def PlotParamIntLgd(df,showLgd,table_name):
     #fig1.show()
     return fig1
 
-def PlotTxParam(df1, dx, table_name):
+def PlotTxParam(df1, xRange,dx,yRange, table_name):
     prefix= table_name[:2]
-    varControl= table_name[2:6]
+    varControl= table_name[3:7]
     col_names = df1.columns.values[1:]
     paramStr = col_names.tolist()
     NOF = len(paramStr)
@@ -309,7 +309,7 @@ def PlotTxParam(df1, dx, table_name):
         # ax.plot(df1["Wavelength"], df1[paramStr[i]], color=colorLegend[i], linestyle=lineStyle[i % Ls], linewidth=0.8)
         m = 4
         ax.plot(df1["Wavelength"], df1[paramStr[i]], color=colorLegend[i], linestyle=LineStyleChange(i, m, Ls),
-                linewidth=0.8)
+                linewidth=0.6)
         if paramStr[i]=='0.0':
             paramStr[i] == '0'
     lgd = plt.legend(paramStr, fontsize=6,
@@ -345,7 +345,7 @@ def PlotTxParam(df1, dx, table_name):
     #dx = int(np.round((xmax-xmin)/5,1))
     ax.text(1554.5, -15, "P", color=colorLegend[m])
     """
-    fig, ax = SettingAxis(fig, ax, [xmin, xmax], [ymin, ymax], dx, prefix)
+    fig, ax = SettingAxis(fig, ax, xRange, yRange, dx, prefix)
     # Save figure
     nameFig=  table_name + '.png'
     plt.savefig(nameFig, dpi=300, transparent=True, bbox_inches='tight',
@@ -380,7 +380,7 @@ def SettingXYlabels(typeSignal):
 def SettingAxis(fig, ax, xRange, yRange, dx, typeSignal):
         xLabel,yLabel= SettingXYlabels(typeSignal)
         if dx!='':
-            ax.set_xticks(list(range(xRange[0], xRange[1] + 1, dx)))
+            ax.set_xticks(list(range(int(xRange[0]), int(xRange[1]) + 1, dx)))
         # ax.set_xticks(list(range(xRange[0], xRange[1]+1, 2))) #para el TEDFL parametrico
         # ax.set_xticks(list(range(xRange[0], xRange[1] + 1, 50))) #para el MZI vs  C parametrico
         # ax.set_xticks(list(range(xRange[0], xRange[1] + 1, 2))) #para linealidad por temepratura
@@ -544,12 +544,14 @@ def ColorLegendChange(i,m):
 
 
 def SelecTextVarControl(varControl):
-    if varControl == 'Temp':
+    if varControl == 'temp':
         title = r'$\mathrm{Temp.} (^{\circ}C)$'
-    elif varControl == 'Curv':
+    elif varControl == 'curv':
         title = '$\mathrm{Curv} (m^{-1})$'
-    elif varControl == 'Torsion':
+    elif varControl == 'tors':
         title = r'$\mathrm{Torsion} (^{\circ})$'
+    elif varControl == 'curr':
+        title = r'$\mathrm{I} (mA)$'
     else:
         title = ''
     return title
