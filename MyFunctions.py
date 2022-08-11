@@ -254,7 +254,7 @@ def CreateDataPlot(df):
         dataList.append({"x": df["Wavelength"].tolist(), "y": df[paramStr[i]].tolist(), "name": paramStr[i]})
     return dataList
 
-def PlotParamIntLgd(df,showLgd,table_name):
+def PlotParamIntLgd(df,flagLgd,table_name):
     col_names = df.columns.values[1:]
     paramStr = col_names.tolist()
     NOF = len(paramStr)
@@ -278,12 +278,12 @@ def PlotParamIntLgd(df,showLgd,table_name):
             name=paramStr[i],
             mode="lines",
             line_color=colorLegend[i],
-            showlegend=showLgd,
+            showlegend=True,
             ))
     fig1.update_layout(hovermode='closest')
     fig1.update_xaxes(showgrid=False, title_font=dict(size=16, family='Helvetica'))
     fig1.update_yaxes(showgrid=False, title_font=dict(size=16, family='Helvetica'))
-    typeSignal=table_name[:2]
+    typeSignal=table_name[7:9]
     xLabel,yLabel=SettingXYlabels(typeSignal)
     fig1.update_layout(xaxis=dict(title=xLabel, linecolor="black", zeroline=False),
                       yaxis=dict(title=yLabel, linecolor="black",zeroline=False))
@@ -292,7 +292,7 @@ def PlotParamIntLgd(df,showLgd,table_name):
     #fig1.show()
     return fig1
 
-def PlotTxParam(df1, xRange,dx,yRange, table_name):
+def PlotTxParamLgd(df1, xRange,dx,yRange, table_name, flagLgd):
     user = table_name[:6]
     prefix= table_name[7:9]
     varControl= table_name[10:14]
@@ -303,6 +303,10 @@ def PlotTxParam(df1, xRange,dx,yRange, table_name):
     xmax = int(df1["Wavelength"].max())
     minYi = df1[paramStr].min()
     kmin = df1[paramStr].idxmin()
+    if flagLgd=='l':
+        loc = 'upper left'
+    else: # flagLgd=='r'
+        loc = 'upper right'
     fig, ax = plt.subplots()
     #fig = plt.figure()
     #ax = fig.add_subplot(111)
@@ -316,9 +320,9 @@ def PlotTxParam(df1, xRange,dx,yRange, table_name):
     lgd = plt.legend(paramStr, fontsize=6,
                      title=SelecTextVarControl(varControl),
                      title_fontsize=6,
-                     bbox_to_anchor=(0, 1),
+                     #bbox_to_anchor=(0, 1),
                      # loc='upper right',
-                     loc='upper left',
+                     loc=loc,
                      fancybox=False)
     # SEt xlim,ylim
     ymin = min(minYi)

@@ -57,10 +57,7 @@ def cb():
     dx = int(request.form['dx'])
     xRange = [xmin, xmax]
     yRange = [ymin, ymax]
-    if request.form.get('Leyenda'):
-        flagLgd = True
-    else:
-        flagLgd = False
+    flagLgd = request.form.get('leyenda')
     table_name = request.form['table_name']
     graphJSON,nameFig = gm(paramStr, xRange, dx,yRange, flagLgd, table_name)
     return render_template('customPlot.html',graphJSON=graphJSON ,nameFig=nameFig)
@@ -72,18 +69,20 @@ def catchUser():
 
 @app.route("/load_options", methods=['POST', 'GET'])
 def listingTables():
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    nua = request.form['nua']
+    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
     #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     inspector = inspect(engine)
-    user = request.form['nua']
     table_names = inspector.get_table_names()
     # renderizamos la plantilla "loadOptions.html"
-    return render_template('loadOptions.html',table_names=table_names, user=user)
+    return render_template('loadOptions.html',table_names=table_names, nua=nua)
 
 @app.route("/loaded_database", methods=['POST', 'GET'])
 def uploadDB():
     #csvFile = request.form['']
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
     #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     table_name = request.form['selectdb']
     #df1 = pd.read_csv(csvFile+".csv")
@@ -91,7 +90,7 @@ def uploadDB():
     #lambdaMax= fu.PointsLinearity(df, 'max')
     col_names = df.columns.values[1:]
     paramStr = col_names.tolist()
-    flagLgd=True
+    flagLgd='r'
     fig = fu.PlotParamIntLgd(df,flagLgd,table_name)
     #fig =fu.PlotSignalInt(paramStr,lambdaMax)
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
@@ -103,7 +102,8 @@ def uploadDB():
 @app.route("/csvtables2db", methods=['POST', 'GET'])
 def loadDB():
     basedir = os.path.abspath(os.path.dirname(__file__))
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
     #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     #metadata = MetaData()
     #metadata.reflect(engine)
@@ -156,7 +156,7 @@ def loadDB():
 @app.route("/upload", methods=['POST', 'GET'])
 def uploader():
     if request.method == 'POST':
-        user = request.form['nua']
+        nua = request.form['nua']
         uploaded_files = request.files.getlist('archivo')
         varControl = request.form['varControl'] #temp, bend, tors,curr
         prefix = request.form['type'] #po, tx, ld or as
@@ -194,19 +194,21 @@ def uploader():
         xRange = [xmin, xmax]
         yRange = [-100, 0]
         dx = ''
-        table_name =user+'_'+prefix+'_'+varControl+'_'+direction
+        table_name = nua +'_'+prefix+'_'+varControl+'_'+direction
         #df.to_csv("dataAll.csv", index=False)
-        engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+        #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
         #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
         df1=df
         df1.to_sql(table_name, engine, index=False)
-        flagLgd = True
+        flagLgd = 'r'
         #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
         graphJSON, nameFig = gm(paramStr,xRange,dx,yRange, flagLgd,table_name)
         return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON, table_name=table_name)
      
 def gm(paramStr,xRange,dx, yRange, flagLgd,table_name):
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
     #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     df1 = pd.read_sql_table(table_name,con=engine)
     basedir = os.path.abspath(os.path.dirname(__file__))
@@ -220,11 +222,11 @@ def gm(paramStr,xRange,dx, yRange, flagLgd,table_name):
     #xRange = [xmin, xmax]
     df2 = fu.RefreshDataFrame(df1,xRange, paramStr)
     df2.to_csv("dataAll.csv", index=False)
-    fig = fu.PlotParamIntLgd(df2,flagLgd,table_name)
+    fig = fu.PlotParamIntLgd(df2, flagLgd, table_name)
     #dataJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     #layoutJSON = json.dumps(fig.layout, cls=plotly.utils.PlotlyJSONEncoder)
-    nameFig = fu.PlotTxParam(df2, xRange,dx, yRange,table_name)
+    nameFig = fu.PlotTxParamLgd(df2, xRange,dx, yRange,table_name, flagLgd)
     #return dataJSON, layoutJSON, nameFig
     return graphJSON,nameFig
 
@@ -232,7 +234,8 @@ def gm(paramStr,xRange,dx, yRange, flagLgd,table_name):
 def eraseTable():
     table_name = request.form['erase_db']
     # para borrar tabla
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
     #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     engine.execute("DROP table IF EXISTS "+table_name)
     inspector = inspect(engine)

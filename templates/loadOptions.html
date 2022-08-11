@@ -31,7 +31,6 @@
 
     <form action="/upload" method="POST" enctype="multipart/form-data">
     <p><input type="file" name="archivo" multiple></p>
-
     <p><label for="type">Signal wanted:</label>
         <select name='type' id="type">
             <option value="tx">Transmission spectrum</option>
@@ -49,7 +48,7 @@
             <option value="curr">Current</option>
         </select>
     </p>
-        <input type="text" id='nua' name="nua" value={{nua|safe}} ><br>
+        <input type="hidden" id='nua' name="nua" value={{nua|safe}} ><br>
     <p><input type="submit" value="Submit"></p>
     </form>
 
@@ -78,6 +77,5 @@
         <br>
         <p><input type="submit" value="Erase"></p>
      </form>
-
  </body>
 </html>
