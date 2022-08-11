@@ -2,6 +2,7 @@ import os
 import pymysql
 from flask import Flask, jsonify, g,abort, render_template, request, redirect, url_for, send_from_directory
 # from app import app
+from numpy import ndarray
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
 from os.path import join, dirname, realpath
@@ -25,7 +26,7 @@ from sqlalchemy.ext.declarative import declarative_base
 app = Flask(__name__, static_folder='/static')
 app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f'
 #app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] =False
+#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] =False
 
 # Carpeta de subida
 app.config['UPLOAD_FOLDER'] = 'Uploads'
@@ -76,8 +77,8 @@ def listingTables():
 @app.route("/loaded_database", methods=['POST', 'GET'])
 def uploadDB():
     #csvFile = request.form['']
-    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     table_name = request.form['selectdb']
     #df1 = pd.read_csv(csvFile+".csv")
     df = pd.read_sql_table(table_name,con=engine)
@@ -96,8 +97,8 @@ def uploadDB():
 @app.route("/csvtables2db", methods=['POST', 'GET'])
 def loadDB():
     basedir = os.path.abspath(os.path.dirname(__file__))
-    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     #metadata = MetaData()
     #metadata.reflect(engine)
     basedir = os.path.abspath(os.path.dirname(__file__))
@@ -162,8 +163,8 @@ def uploader():
         os.chdir(filepath)
         filesCSV = glob.glob('*.CSV')
         for i in filesCSV:
-            if i=='CAR.CSV' or i=='car.csv' or i=='CAR.csv' or i=='car.CSV':
-                dfParam = pd.read_csv(i, skiprows=1, header=None, names=["fileName", "param"])
+            if i=='CAR.CSV':
+                dfParam = pd.read_csv('CAR.CSV', skiprows=1, header=None, names=["fileName", "param"])
                 param = dfParam["param"].tolist()
                 if varControl=='curv':
                     curv = fu.Dist2Curv(param)
@@ -184,11 +185,12 @@ def uploader():
         xmin = df["Wavelength"].min()
         xmax = df["Wavelength"].max()
         xRange = [xmin, xmax]
+        yRange = [-100, 0]
         dx = ''
         table_name =prefix+'_'+varControl+'_'+direction
         #df.to_csv("dataAll.csv", index=False)
-        #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-        engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+        engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+        #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
         df1=df
         df1.to_sql(table_name, engine, index=False)
         flagLgd = True
@@ -223,8 +225,8 @@ def gm(paramStr,xRange,dx, yRange, flagLgd,table_name):
 def eraseTable():
     table_name = request.form['erase_db']
     # para borrar tabla
-    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
+    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
+    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     engine.execute("DROP table IF EXISTS "+table_name)
     inspector = inspect(engine)
     table_names = inspector.get_table_names()
