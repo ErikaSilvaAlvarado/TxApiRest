@@ -2,6 +2,7 @@
 <html>
  <head>
      <meta name="viewport" content="initial-scale=1, width=device-width">
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
      <title>Choose a plot form: </title>
  </head>
 
@@ -28,7 +29,6 @@
 
     <p><h1>Option2: Load OSA files: </h1></p>
     <p>Load CSV files </p>
-
     <form action="/upload" method="POST" enctype="multipart/form-data">
     <p><input type="file" name="archivo" multiple></p>
     <p><label for="type">Signal wanted:</label>
@@ -48,7 +48,10 @@
             <option value="curr">Current</option>
         </select>
     </p>
-        <input type="hidden" id='nua' name="nua" value={{nua|safe}} ><br>
+        <input type="text" id='nua' name="nua" value={{nua|safe}} ><br>
+            <script>
+                var nua = document.getElementById("nua");
+            </script>
     <p><input type="submit" value="Submit"></p>
     </form>
 
