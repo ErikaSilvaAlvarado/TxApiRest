@@ -293,8 +293,9 @@ def PlotParamIntLgd(df,showLgd,table_name):
     return fig1
 
 def PlotTxParam(df1, xRange,dx,yRange, table_name):
-    prefix= table_name[:2]
-    varControl= table_name[3:7]
+    user = table_name[:6]
+    prefix= table_name[7:9]
+    varControl= table_name[10:14]
     col_names = df1.columns.values[1:]
     paramStr = col_names.tolist()
     NOF = len(paramStr)

@@ -28,6 +28,7 @@
 
     <p><h1>Option2: Load OSA files: </h1></p>
     <p>Load CSV files </p>
+
     <form action="/upload" method="POST" enctype="multipart/form-data">
     <p><input type="file" name="archivo" multiple></p>
 
@@ -48,6 +49,7 @@
             <option value="curr">Current</option>
         </select>
     </p>
+        <input type="text" id='nua' name="nua" value={{nua|safe}} ><br>
     <p><input type="submit" value="Submit"></p>
     </form>
 

@@ -64,15 +64,21 @@ def cb():
     table_name = request.form['table_name']
     graphJSON,nameFig = gm(paramStr, xRange, dx,yRange, flagLgd, table_name)
     return render_template('customPlot.html',graphJSON=graphJSON ,nameFig=nameFig)
-    
+
 @app.route("/")
+def catchUser():
+    # renderizamos la plantilla "index.html"
+    return render_template('index.html')
+
+@app.route("/load_options")
 def listingTables():
     engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
     #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     inspector = inspect(engine)
+    user = request.form['nua']
     table_names = inspector.get_table_names()
-    # renderizamos la plantilla "options_load.html"
-    return render_template('options_load.html',table_names=table_names)
+    # renderizamos la plantilla "loadOptions.html"
+    return render_template('loadOptions.html',table_names=table_names, user=user)
 
 @app.route("/loaded_database", methods=['POST', 'GET'])
 def uploadDB():
@@ -82,7 +88,7 @@ def uploadDB():
     table_name = request.form['selectdb']
     #df1 = pd.read_csv(csvFile+".csv")
     df = pd.read_sql_table(table_name,con=engine)
-    lambdaMax= fu.PointsLinearity(df, 'max')
+    #lambdaMax= fu.PointsLinearity(df, 'max')
     col_names = df.columns.values[1:]
     paramStr = col_names.tolist()
     flagLgd=True
@@ -127,8 +133,8 @@ def loadDB():
     table_names = inspector.get_table_names()
     #for table_name in table_names:
     #    print(f"Table:{table_name}")
-    # renderizamos la plantilla "options_load.html"
-    return render_template('options_load.html',table_names=table_names)
+    # renderizamos la plantilla "loadOptions.html"
+    return render_template('loadOptions.html',table_names=table_names)
     """    
     #para borar en localhost pero en cleardb no creo haya funcionado
     engine=drop_table('tx_temp_inc2', engine)
@@ -150,6 +156,7 @@ def loadDB():
 @app.route("/upload", methods=['POST', 'GET'])
 def uploader():
     if request.method == 'POST':
+        user = request.form['nua']
         uploaded_files = request.files.getlist('archivo')
         varControl = request.form['varControl'] #temp, bend, tors,curr
         prefix = request.form['type'] #po, tx, ld or as
@@ -187,7 +194,7 @@ def uploader():
         xRange = [xmin, xmax]
         yRange = [-100, 0]
         dx = ''
-        table_name =prefix+'_'+varControl+'_'+direction
+        table_name =user+'_'+prefix+'_'+varControl+'_'+direction
         #df.to_csv("dataAll.csv", index=False)
         engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
         #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
@@ -232,8 +239,8 @@ def eraseTable():
     table_names = inspector.get_table_names()
     #for table_name in table_names:
     #    print(f"Table:{table_name}")
-    # renderizamos la plantilla "options_load.html"
-    return render_template('options_load.html',table_names=table_names)
+    # renderizamos la plantilla "loadOptions.html"
+    return render_template('loadOptions.html',table_names=table_names)
 
 if __name__ == '__main__':
     # Iniciamos la aplicación
