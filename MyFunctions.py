@@ -356,7 +356,7 @@ def SettingXYlabels(typeSignal):
     if typeSignal == 'tx':  # Transmission
         xLabel = 'Wavelength (nm)'
         yLabel = 'Transmission (dB)'
-    elif typeSignal == 'po':  # Pout
+    elif typeSignal == 'po' or typeSignal == 'ld' or typeSignal == 'as':  # Pout
         xLabel = 'Wavelength (nm)'
         yLabel = 'Output power (dBm)'  # FFT
     elif typeSignal == 'ft':
@@ -546,7 +546,7 @@ def ColorLegendChange(i,m):
 def SelecTextVarControl(varControl):
     if varControl == 'temp':
         title = r'$\mathrm{Temp.} (^{\circ}C)$'
-    elif varControl == 'curv':
+    elif varControl == 'bend':
         title = '$\mathrm{Curv} (m^{-1})$'
     elif varControl == 'tors':
         title = r'$\mathrm{Torsion} (^{\circ})$'

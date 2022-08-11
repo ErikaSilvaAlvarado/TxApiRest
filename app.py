@@ -151,8 +151,8 @@ def loadDB():
 def uploader():
     if request.method == 'POST':
         uploaded_files = request.files.getlist('archivo')
-        varControl = request.form['varControl']
-        prefix = request.form['type'] #po or tx
+        varControl = request.form['varControl'] #temp, bend, tors,curr
+        prefix = request.form['type'] #po, tx, ld or as
         basedir = os.path.abspath(os.path.dirname(__file__))
         filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
         for file in uploaded_files:
@@ -180,7 +180,7 @@ def uploader():
                 dfEDFA = pd.read_csv('EDFA.CSV', header=22, names=["xEDFA", "yEDFA"])
         if prefix=='tx':
             df = fu.CreateTxDataFrame(filepath, dfEDFA, dfParam)  # require EDFA and fileName  
-        elif prefix=='po':
+        elif prefix=='po' or prefix=='ld' or prefix=='as':
             df = fu.CreatePoutDataFrame(filepath, dfParam)
         xmin = df["Wavelength"].min()
         xmax = df["Wavelength"].max()
