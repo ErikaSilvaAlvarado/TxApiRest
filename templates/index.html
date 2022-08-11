@@ -1,81 +1,13 @@
 <!DOCTYPE html>
-<html>
- <head>
-     <meta name="viewport" content="initial-scale=1, width=device-width">
-     <title>Choose a plot form: </title>
- </head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ingresa Nombre</title>
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
 
- <body>
-    <p><h1>Option1: Plot a remote database table:</h1></p>
-    <form name="form1" action="/loaded_database" method="POST" >
-    <label for="selectdb">Choose Databases(s):</label>
-            <select name='selectdb' id="selectdb" multiple >
-            </select>
-                <script>
-                    var select = document.getElementById("selectdb");
-                    var options = {{table_names|safe}};
-                    for(var i = 0; i < options.length; i++) {
-                        var opt = options[i];
-                        var el = document.createElement("option");
-                        el.textContent = opt;
-                        el.value = opt;
-                        select.appendChild(el);
-                    }
-                </script>        
-        <br>
-        <p><input type="submit" value="Submit"></p>
-     </form>
-
-    <p><h1>Option2: Load OSA files: </h1></p>
-    <p>Load CSV files </p>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-    <p><input type="file" name="archivo" multiple></p>
-
-    <p><label for="type">Signal wanted:</label>
-        <select name='type' id="type">
-            <option value="tx">Transmission spectrum</option>
-            <option value="po">Output power</option>
-            <option value="ld">Pout LD</option>
-            <option value="as">Pout ASE source</option>
-        </select>
-    </p>
-    <p> <label for="varControl"> Characterize by:</label>
-        <select name='varControl' id="varControl">
-            <option value="temp">Temperature</option>
-            <option value="bend">Curvature</option>
-            <option value="tors">Torsion</option>
-            <option value="stab">Stability</option>
-            <option value="curr">Current</option>
-        </select>
-    </p>
-    <p><input type="submit" value="Submit"></p>
-    </form>
-
-
-    <p><h1> Option3: Load CSV table to remote database:</h1></p>
-    <form action="/csvtables2db" method="POST" enctype="multipart/form-data">
-    <p><input type="submit" value="Load2DB"></p>
-    </form>
-
- <p><h1> Option4:Erase database:</h1></p>
-    <form name="form_erase" action="/erase_table" method="POST" >
-    <label for="erase_db">Erase this Database(s):</label>
-            <select name='erase_db' id="erase_db" multiple >
-            </select>
-                <script>
-                    var select = document.getElementById("erase_db");
-                    var options = {{table_names|safe}};
-                    for(var i = 0; i < options.length; i++) {
-                        var opt = options[i];
-                        var el = document.createElement("option");
-                        el.textContent = opt;
-                        el.value = opt;
-                        select.appendChild(el);
-                    }
-                </script>        
-        <br>
-        <p><input type="submit" value="Erase"></p>
-     </form>
-
- </body>
+</body>
 </html>

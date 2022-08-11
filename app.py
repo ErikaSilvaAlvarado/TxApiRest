@@ -71,8 +71,8 @@ def listingTables():
     #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     inspector = inspect(engine)
     table_names = inspector.get_table_names()
-    # renderizamos la plantilla "index.html"
-    return render_template('index.html',table_names=table_names)
+    # renderizamos la plantilla "options_load.html"
+    return render_template('options_load.html',table_names=table_names)
 
 @app.route("/loaded_database", methods=['POST', 'GET'])
 def uploadDB():
@@ -127,8 +127,8 @@ def loadDB():
     table_names = inspector.get_table_names()
     #for table_name in table_names:
     #    print(f"Table:{table_name}")
-    # renderizamos la plantilla "index.html"
-    return render_template('index.html',table_names=table_names)
+    # renderizamos la plantilla "options_load.html"
+    return render_template('options_load.html',table_names=table_names)
     """    
     #para borar en localhost pero en cleardb no creo haya funcionado
     engine=drop_table('tx_temp_inc2', engine)
@@ -232,8 +232,8 @@ def eraseTable():
     table_names = inspector.get_table_names()
     #for table_name in table_names:
     #    print(f"Table:{table_name}")
-    # renderizamos la plantilla "index.html"
-    return render_template('index.html',table_names=table_names)
+    # renderizamos la plantilla "options_load.html"
+    return render_template('options_load.html',table_names=table_names)
 
 if __name__ == '__main__':
     # Iniciamos la aplicación
