@@ -23,8 +23,8 @@ from sqlalchemy.ext.declarative import declarative_base
 
 # instancia del objeto Flask
 app = Flask(__name__, static_folder='/static')
-#app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f'
-app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt'
+app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f'
+#app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt'
 #app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] =False
 
 # Carpeta de subida
