@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Load CSV filse</title>
+</head>
+<body>
+<!DOCTYPE html>
 <html>
  <head>
      <meta name="viewport" content="initial-scale=1, width=device-width">
@@ -22,9 +29,12 @@
                         el.value = opt;
                         select.appendChild(el);
                     }
-                </script>        
+                </script>
         <br>
-        <input type="text" id='nua' name="nua" value={{nua|safe}} readonly style="visibility:hidden;"><br>
+        <input type="text" id='nua' name="nua" value= ><br>
+            <script>
+                var nua = document.getElementById("nua");
+            </script>
         <p><input type="submit" value="Submit"></p>
      </form>
 
@@ -49,21 +59,20 @@
             <option value="curr">Current</option>
         </select>
     </p>
-        <input type="text" id='nua' name="nua" value={{nua|safe}} readonly style="visibility:hidden;"><br>
+        <input type="text" id='nua' name="nua" value=nua ><br>
+
     <p><input type="submit" value="Submit"></p>
     </form>
 
 
     <p><h1> Option3: Load CSV table to remote database:</h1></p>
     <form action="/csvtables2db" method="POST" enctype="multipart/form-data">
-        <input type="text" id='nua' name="nua" value={{nua|safe}} ><br>
-        <p><input type="submit" value="Load2DB"></p>
+    <p><input type="submit" value="Load2DB"></p>
     </form>
 
  <p><h1> Option4:Erase database:</h1></p>
     <form name="form_erase" action="/erase_table" method="POST" >
-        <input type="text" id='nua' name="nua" value={{nua|safe}} readonly style="visibility:hidden;" ><br>
-        <label for="erase_db">Erase this Database(s):</label>
+    <label for="erase_db">Erase this Database(s):</label>
             <select name='erase_db' id="erase_db" multiple >
             </select>
                 <script>
@@ -80,6 +89,8 @@
         <br>
         <p><input type="submit" value="Erase"></p>
      </form>
-     <h6><a href="/">Return to index page</a></h6>
+    <h6><a href="/">Return to index page</a></h6>
+
  </body>
 </html>
+

@@ -9,14 +9,13 @@
 <body>
 <h1>Printed Signals </h1>
    <div id='chart' class='chart'>  </div>
-<h6><a href="/loaded_database">Return to generalPlot</a></h6>
 <h6><a href="/">Return to index page</a></h6>
 </body>
   <script>
       Plotly.newPlot('chart',{{graphJSON|safe}},{});
    </script>
 <h6><a href="{{ url_for('download', filename=nameFig) }}">Descargar como imagen PNG</a> </h6>
-<h6><a href="{{ url_for('downloadCSV', filename='dataAll.csv') }}">Descargar como CSV</a> </h6>
+<h6><a href="{{ url_for('downloadCSV', filename=nameFile) }}">Descargar como CSV</a> </h6>
 <script type='text/javascript'>
     var myPlot = document.getElementById('chart')
     myPlot.on('plotly_click', function(data){
@@ -37,5 +36,5 @@
     }
 });
 </script>
-
+<h6><a href="/">Return to index page</a></h6>
 </html>

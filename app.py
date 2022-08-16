@@ -22,10 +22,9 @@ from sqlalchemy import MetaData
 from sqlalchemy.ext.declarative import declarative_base
 
 # instancia del objeto Flask
-
 app = Flask(__name__, static_folder='/static')
-app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f'
-#app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt'
+#app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f'
+app.config['SQLALCHEMY_DATABASE_URI'] ='mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt'
 #app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] =False
 
 # Carpeta de subida
@@ -60,19 +59,41 @@ def cb():
     flagLgd = request.form.get('leyenda')
     table_name = request.form['table_name']
     graphJSON,nameFig = gm(paramStr, xRange, dx,yRange, flagLgd, table_name)
-    return render_template('customPlot.html',graphJSON=graphJSON ,nameFig=nameFig)
+    nameFile = table_name + '.csv'
+    return render_template('customPlot.html',graphJSON=graphJSON, nameFile=nameFile, nameFig=nameFig)
 
 @app.route("/")
-def catchUser():
+def setup():
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+    os.chdir(filepath)
+    filesCSV = glob.glob('*.CSV')
+    for i in filesCSV:
+        try:
+            os.remove(i)
+        except OSError as e:
+                print(f"Error:{e.strerror}")
+    filescsv = glob.glob('*.csv')
+    for i in filescsv:
+        try:
+            os.remove(i)
+        except OSError as e:
+            print(f"Error:{e.strerror}")
+    filesPNG = glob.glob('*.png')
+    for i in filesPNG:
+        try:
+            os.remove(i)
+        except OSError as e:
+            print(f"Error:{e.strerror}")
     # renderizamos la plantilla "index.html"
     return render_template('index.html')
 
+#@app.route('/downloads/<path:filename>', methods=['GET', 'POST'])
+#def download(filename):
 @app.route("/load_options", methods=['POST', 'GET'])
 def listingTables():
     nua = request.form['nua']
     engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     inspector = inspect(engine)
     table_names = inspector.get_table_names()
     # renderizamos la plantilla "loadOptions.html"
@@ -80,10 +101,8 @@ def listingTables():
 
 @app.route("/loaded_database", methods=['POST', 'GET'])
 def uploadDB():
-    #csvFile = request.form['']
+    nua = request.form['nua']
     engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     table_name = request.form['selectdb']
     #df1 = pd.read_csv(csvFile+".csv")
     df = pd.read_sql_table(table_name,con=engine)
@@ -96,17 +115,13 @@ def uploadDB():
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     #if csvFile=='curv_dec' or csvFile=='curv_dec':
     varControl=''
-    return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON, table_name=table_name)
+    return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON, table_name=table_name, nua=nua)
 
 
 @app.route("/csvtables2db", methods=['POST', 'GET'])
 def loadDB():
     basedir = os.path.abspath(os.path.dirname(__file__))
     engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
-    #metadata = MetaData()
-    #metadata.reflect(engine)
     basedir = os.path.abspath(os.path.dirname(__file__))
     filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
     os.chdir(filepath)
@@ -119,39 +134,13 @@ def loadDB():
     df2.to_sql('tx_curv_inc', engine, index=False)
     df3.to_sql('tx_temp_dec', engine, index=False)
     df4.to_sql('tx_temp_inc', engine, index=False)
-    
-    """
-    #para borar tablas
-    engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
-    engine.execute("DROP table IF EXISTS Tx_curv_inc2")
-    engine.execute("DROP table IF EXISTS Tx_curv_dec2")
-    engine.execute("DROP table IF EXISTS Tx_temp_inc2")
-    engine.execute("DROP table IF EXISTS Tx_temp_dec2")
-    """
     inspector = inspect(engine)
     table_names = inspector.get_table_names()
     #for table_name in table_names:
     #    print(f"Table:{table_name}")
     # renderizamos la plantilla "loadOptions.html"
     return render_template('loadOptions.html',table_names=table_names)
-    """    
-    #para borar en localhost pero en cleardb no creo haya funcionado
-    engine=drop_table('tx_temp_inc2', engine)
-    engine=drop_table('tx_temp_dec2', engine)
-    engine=drop_table('tx_curv_inc2', engine)
-    engine=drop_table('tx_curv_dec2', engine)
-    
-    #print(table_df1)
-    """
-    """
-    #esto vacía a tabla, pero no la borra
-    with engine.connect() as conn, conn.begin():
-        df = pd.read_sql('select * from Tx_curv_dec2 limit 1', con=conn)
-        print (df.head())
-        df.to_sql('tx_curv_dec2', con=conn, schema='MZI_SCF_fatt', if_exists='replace')
-        conn.close()
-    """
+
 
 @app.route("/upload", methods=['POST', 'GET'])
 def uploader():
@@ -204,12 +193,10 @@ def uploader():
         flagLgd = 'r'
         #graphJSON = gm(paramStr, xRange, dx, flagLgd, varControl)
         graphJSON, nameFig = gm(paramStr,xRange,dx,yRange, flagLgd,table_name)
-        return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON, table_name=table_name)
+        return render_template('generalPlot.html', paramStr=paramStr, graphJSON=graphJSON, table_name=table_name, nua=nua)
      
 def gm(paramStr,xRange,dx, yRange, flagLgd,table_name):
     engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     df1 = pd.read_sql_table(table_name,con=engine)
     basedir = os.path.abspath(os.path.dirname(__file__))
     filepath = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
@@ -221,29 +208,33 @@ def gm(paramStr,xRange,dx, yRange, flagLgd,table_name):
     ymax = 0
     #xRange = [xmin, xmax]
     df2 = fu.RefreshDataFrame(df1,xRange, paramStr)
-    df2.to_csv("dataAll.csv", index=False)
+    df2.to_csv(table_name+'.csv', index=False)
     fig = fu.PlotParamIntLgd(df2, flagLgd, table_name)
-    #dataJSON = json.dumps(fig.data, cls=plotly.utils.PlotlyJSONEncoder)
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    #layoutJSON = json.dumps(fig.layout, cls=plotly.utils.PlotlyJSONEncoder)
     nameFig = fu.PlotTxParamLgd(df2, xRange,dx, yRange,table_name, flagLgd)
-    #return dataJSON, layoutJSON, nameFig
     return graphJSON,nameFig
 
 @app.route("/erase_table", methods=['POST', 'GET'])
 def eraseTable():
+    nua = request.form['nua']
     table_name = request.form['erase_db']
     # para borrar tabla
     engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-    #engine = create_engine("mysql+pymysql://b9b5c80ea73822:f09bb1f5@us-cdbr-east-06.cleardb.net/heroku_a5313fa6d44ab5f")
-    #engine = create_engine("mysql+pymysql://esilva:Cr1st0_R3y@localhost/MZI_SCF_fatt")
     engine.execute("DROP table IF EXISTS "+table_name)
     inspector = inspect(engine)
     table_names = inspector.get_table_names()
-    #for table_name in table_names:
-    #    print(f"Table:{table_name}")
     # renderizamos la plantilla "loadOptions.html"
-    return render_template('loadOptions.html',table_names=table_names)
+    return render_template('loadOptions.html',table_names=table_names, nua=nua)
+
+@app.route('/test', methods=['POST'])
+def test():
+    output = request.get_json()
+    print(output) # This is the output that was stored in the JSON within the browser
+    print(type(output))
+    result = json.loads(output) #this converts the json output to a python dictionary
+    print(result) # Printing the new dictionary
+    print(type(result))#this shows the json converted as a python dictionary
+    return result
 
 if __name__ == '__main__':
     # Iniciamos la aplicación

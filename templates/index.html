@@ -2,13 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Ingresa NUA</title>
+    <title>Home</title>
     <meta name="viewport" content="initial-scale=1, width=device-width">
+
 </head>
 <body>
-    <form name="form" action="/load_options" method="POST" >
-        <label for="nua">NUA:</label> <input maxlength="6" type="text" id='nua' name="nua"> <br>
-        <input type="submit" value="Send" >
-    </form>
+    <br> <br>
+    Welcome! Developing site <br>
+     <form name="form1" action="/load_options" method="POST" >
+        <label for="nua">Ingrese NUA:</label> <input type="text" id='nua' name="nua"> <br>
+        <p><input type="submit" value="Send NUA" onclick="sendNua()"></p>
+     </form>
+<script>
+    function sendNua(){
+        var user= document.getElementById("nua");
+        return user
+</script>
 </body>
 </html>
